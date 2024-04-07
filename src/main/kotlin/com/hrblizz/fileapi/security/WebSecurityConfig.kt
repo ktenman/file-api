@@ -28,7 +28,7 @@ internal class WebSecurityConfig(
         authorizationConfigurer.antMatchers("/docs", "/docs/*").permitAll()
 
         authorizationConfigurer
-            .antMatchers("/status", "/webjars/**", "/favicon.ico").permitAll()
+            .antMatchers("/status", "/webjars/**", "/favicon.ico", "/actuator/**").permitAll()
             .anyRequest().fullyAuthenticated()
     }
 }

@@ -1,5 +1,6 @@
 package com.hrblizz.fileapi.library.log
 
+import org.slf4j.MDC
 import org.springframework.stereotype.Component
 
 @Component
@@ -8,19 +9,40 @@ class Logger {
         write("info", logItem)
     }
 
+    fun info(string: String) {
+        info(LogItem(string))
+    }
+
     fun warning(logItem: LogItem) {
         write("warning", logItem)
+    }
+
+    fun warn(string: String) {
+        warning(string)
+    }
+
+    fun warning(string: String) {
+        warning(LogItem(string))
     }
 
     fun error(logItem: LogItem) {
         write("error", logItem)
     }
 
-    fun crit(logItem: LogItem) {
+    fun error(string: String) {
+        error(LogItem(string))
+    }
+
+    fun critical(logItem: LogItem) {
         write("crit", logItem)
     }
 
+    fun critical(string: String) {
+        critical(LogItem(string))
+    }
+
     private fun write(logLevel: String, logItem: LogItem) {
+        logItem.correlationId = MDC.get(CORRELATION_ID)
         println("$logLevel: $logItem")
     }
 }

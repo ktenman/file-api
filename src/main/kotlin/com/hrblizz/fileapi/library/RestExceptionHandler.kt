@@ -8,6 +8,7 @@ import org.springframework.beans.TypeMismatchException
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.lang.Nullable
 import org.springframework.security.access.AccessDeniedException
 import org.springframework.validation.BindException
 import org.springframework.web.HttpMediaTypeNotSupportedException
@@ -22,7 +23,6 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import org.springframework.web.multipart.support.MissingServletRequestPartException
 import org.springframework.web.servlet.NoHandlerFoundException
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler
-import java.util.ArrayList
 
 @ControllerAdvice
 class RestExceptionHandler(
@@ -30,14 +30,14 @@ class RestExceptionHandler(
 ) : ResponseEntityExceptionHandler() {
 
     override fun handleExceptionInternal(
-        e: Exception,
-        body: Any?,
-        headers: HttpHeaders?,
+        e: java.lang.Exception,
+        @Nullable body: Any?,
+        headers: HttpHeaders,
         status: HttpStatus,
         request: WebRequest
     ): ResponseEntity<Any> {
         if (status.is5xxServerError) {
-            log.crit(ExceptionLogItem("Internal exception: " + e.message, e))
+            log.critical(ExceptionLogItem("Internal exception: " + e.message, e))
         }
 
         if (body != null && body is com.hrblizz.fileapi.rest.ResponseEntity<*>) {
@@ -138,7 +138,10 @@ class RestExceptionHandler(
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException::class)
-    fun handleMethodArgumentTypeMismatch(ex: MethodArgumentTypeMismatchException, request: WebRequest): ResponseEntity<Any> {
+    fun handleMethodArgumentTypeMismatch(
+        ex: MethodArgumentTypeMismatchException,
+        request: WebRequest
+    ): ResponseEntity<Any> {
         val errorStatus = HttpStatus.BAD_REQUEST
         val apiError = com.hrblizz.fileapi.rest.ResponseEntity<Any>(
             null,
@@ -148,7 +151,12 @@ class RestExceptionHandler(
         return ResponseEntity(apiError, HttpHeaders(), errorStatus)
     }
 
-    override fun handleNoHandlerFoundException(ex: NoHandlerFoundException, headers: HttpHeaders, status: HttpStatus, request: WebRequest): ResponseEntity<Any> {
+    override fun handleNoHandlerFoundException(
+        ex: NoHandlerFoundException,
+        headers: HttpHeaders,
+        status: HttpStatus,
+        request: WebRequest
+    ): ResponseEntity<Any> {
         val errorStatus = HttpStatus.NOT_FOUND
         val apiError = com.hrblizz.fileapi.rest.ResponseEntity<Any>(
             null,
@@ -158,7 +166,12 @@ class RestExceptionHandler(
         return ResponseEntity(apiError, HttpHeaders(), errorStatus)
     }
 
-    override fun handleHttpRequestMethodNotSupported(ex: HttpRequestMethodNotSupportedException, headers: HttpHeaders, status: HttpStatus, request: WebRequest): ResponseEntity<Any> {
+    override fun handleHttpRequestMethodNotSupported(
+        ex: HttpRequestMethodNotSupportedException,
+        headers: HttpHeaders,
+        status: HttpStatus,
+        request: WebRequest
+    ): ResponseEntity<Any> {
         val errorStatus = HttpStatus.METHOD_NOT_ALLOWED
         val apiError = com.hrblizz.fileapi.rest.ResponseEntity<Any>(
             null,
@@ -168,7 +181,12 @@ class RestExceptionHandler(
         return ResponseEntity(apiError, HttpHeaders(), errorStatus)
     }
 
-    override fun handleHttpMediaTypeNotSupported(ex: HttpMediaTypeNotSupportedException, headers: HttpHeaders, status: HttpStatus, request: WebRequest): ResponseEntity<Any> {
+    override fun handleHttpMediaTypeNotSupported(
+        ex: HttpMediaTypeNotSupportedException,
+        headers: HttpHeaders,
+        status: HttpStatus,
+        request: WebRequest
+    ): ResponseEntity<Any> {
         val errorStatus = HttpStatus.UNSUPPORTED_MEDIA_TYPE
         val apiError = com.hrblizz.fileapi.rest.ResponseEntity<Any>(
             null,

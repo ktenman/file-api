@@ -1,7 +1,9 @@
 package com.hrblizz.fileapi.library
 
+import com.hrblizz.fileapi.library.log.CORRELATION_ID
 import com.hrblizz.fileapi.library.log.Logger
 import com.hrblizz.fileapi.library.log.TraceLogItem
+import org.slf4j.MDC
 import org.springframework.stereotype.Component
 import org.springframework.web.servlet.HandlerInterceptor
 import javax.servlet.http.HttpServletRequest
@@ -17,7 +19,7 @@ class LoggerRequestInterceptor(
         response: HttpServletResponse,
         handler: Any
     ): Boolean {
-        request.setAttribute("start_time", System.currentTimeMillis())
+        request.setAttribute("start_time", System.nanoTime())
         return true
     }
 
@@ -27,13 +29,19 @@ class LoggerRequestInterceptor(
         handler: Any,
         ex: Exception?
     ) {
-        this.logger.info(
-            TraceLogItem(
-                request.method,
-                request.requestURL.toString(),
-                response.status.toLong(),
-                System.currentTimeMillis() - (request.getAttribute("start_time") as Long)
-            )
+        val logItem = TraceLogItem(
+            request.method,
+            request.requestURL.toString(),
+            response.status.toLong(),
+            durationInMillis(request.getAttribute("start_time") as Long),
         )
+        logItem.correlationId = MDC.get(CORRELATION_ID)
+        this.logger.info(logItem)
+        MDC.remove(CORRELATION_ID)
+    }
+
+    fun durationInMillis(startTime: Long): Long {
+        val duration = (System.nanoTime() - startTime) / 1000000.0
+        return duration.toLong()
     }
 }

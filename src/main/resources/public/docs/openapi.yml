@@ -13,4 +13,4 @@ paths:
           description: It's a response.
 
 security:
-  - basicAuth: []
+  - basicAuth: [ ]

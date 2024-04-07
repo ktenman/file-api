@@ -1,17 +1,43 @@
-version: "3.1"
-
 services:
   filedb:
     image: mongo:latest
     environment:
       - MONGO_DATA_DIR=/data/db
       - MONGO_LOG_DIR=/dev/null
+      - MONGO_DB_NAME=files
     volumes:
       - filedb-data:/data/db
     ports:
       - 27027:27017
     command: mongod --logpath=/dev/null # --quiet
 
+  minio:
+    image: minio/minio
+    volumes:
+      - minio_data:/data
+    ports:
+      - 9001:9000
+      - 9002:9001
+    environment:
+      MINIO_ROOT_USER: minioaccesskey
+      MINIO_ROOT_PASSWORD: miniosecretkey
+    command: server /data --console-address ":9001"
+    healthcheck:
+      test: [ "CMD", "mc", "ready", "local" ]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+
+  setup-minio:
+    image: alpine
+    depends_on:
+      minio:
+        condition: service_started
+    volumes:
+      - ./create-bucket.sh:/create-bucket.sh
+    entrypoint: [ ]
+    command: /bin/sh /create-bucket.sh
+
 volumes:
   filedb-data:
-    external: true
+  minio_data:

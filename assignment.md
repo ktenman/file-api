@@ -8,6 +8,7 @@ For each uploaded file, a unique token (UUID) should be generated.
 Boilerplate for this service is already provided with a MongoDB database set up.
 
 **Acceptance**
+
 - Code follows basic coding conventions (see for Java and Kotlin standards below)
 - User can upload files and a token for this file is returned (see documentation below)
 - User can request metadata for the token, multiple tokens metadata can be queried for in a single request
@@ -16,17 +17,19 @@ Boilerplate for this service is already provided with a MongoDB database set up.
 - When an invalid request is made, 400 Bad Request is returned with message containing information about the error
 - Internal exceptions that happen are handled and `503 Service Unavailable` is returned
 - Critical exceptions are logged
-  - Should use [Logger.kt](src/main/kotlin/com/hrblizz/fileapi/library/log/Logger.kt) component
+    - Should use [Logger.kt](src/main/kotlin/com/hrblizz/fileapi/library/log/Logger.kt) component
 - [SUMMARY.md](SUMMARY.md) file is filled with Your commments
 
 # Submission
 
 You can submit your code whichever way you’re most comfortable with. A zip archive is fine.
-But if you are familiar with version control tools, you probably know the benefits of setting up a repository, keeping your commit history and providing us with a link where we can leave feedback right in your code.
+But if you are familiar with version control tools, you probably know the benefits of setting up a repository, keeping
+your commit history and providing us with a link where we can leave feedback right in your code.
 
 As for any additional scripts, documents or your draft-and-test files (yes, please!), include them in a subdirectory.
 
-Also please include an informative [SUMMARY.md] where you at the very least describe what your app (“basically”) does and how to start it.
+Also please include an informative [SUMMARY.md] where you at the very least describe what your app (“basically”) does
+and how to start it.
 
 # Coding standards
 
@@ -36,6 +39,7 @@ For Kotlin - https://kotlinlang.org/docs/reference/coding-conventions.html
 For Java - https://google.github.io/styleguide/javaguide.html
 
 ## Golden coding rules
+
 - ALL files MUST end with a newline symbol
 - NO trailing whitespaces are allowed (GIT hates them)
 - Use 4 spaces for indentation (also for continuation indentation). Do not use tabs.
@@ -45,6 +49,7 @@ For Java - https://google.github.io/styleguide/javaguide.html
 - No unused code is allowed, Including commented code for most cases
 
 ## API spec
+
 *File upload*
 
     POST /files
