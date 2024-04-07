@@ -130,6 +130,11 @@
             <version>${minio.version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <version>3.2.5</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -179,10 +184,6 @@
                         </goals>
                     </execution>
                 </executions>
-                <configuration>
-                    <outputDirectory>${project.reporting.outputDirectory}/jacoco-html</outputDirectory>
-                    <outputFormat>html</outputFormat>
-                </configuration>
             </plugin>
         </plugins>
     </build>
