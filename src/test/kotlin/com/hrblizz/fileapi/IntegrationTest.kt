@@ -19,6 +19,9 @@ import org.testcontainers.containers.MongoDBContainer
 @ContextConfiguration(initializers = [IntegrationTest.Initializer::class])
 annotation class IntegrationTest {
     companion object {
+        const val DEFAULT_USERNAME = "admin"
+        const val DEFAULT_PASSWORD = "hunter2"
+        const val DEFAULT_ROLE = "USER"
         private const val MONGO_DB_NAME = "files"
         private const val MINIO_ACCESS_KEY = "minioaccess"
         private const val MINIO_SECRET_KEY = "miniosecret"

@@ -1,6 +1,9 @@
 package com.hrblizz.fileapi.controller
 
 import com.hrblizz.fileapi.IntegrationTest
+import com.hrblizz.fileapi.IntegrationTest.Companion.DEFAULT_PASSWORD
+import com.hrblizz.fileapi.IntegrationTest.Companion.DEFAULT_ROLE
+import com.hrblizz.fileapi.IntegrationTest.Companion.DEFAULT_USERNAME
 import com.hrblizz.fileapi.data.repository.FileMetadataRepository
 import com.hrblizz.fileapi.library.JsonUtil
 import com.hrblizz.fileapi.rest.FileUploadMetadata
@@ -24,8 +27,10 @@ internal class FileControllerIntegrationTest {
 
     @Resource
     private lateinit var mockMvc: MockMvc
+
     @Resource
     private lateinit var fileMetadataRepository: FileMetadataRepository
+
     @Resource
     private lateinit var storageService: StorageService
     val file = MockMultipartFile("file", "test.txt", "text/plain", "Test content".toByteArray())
@@ -34,7 +39,7 @@ internal class FileControllerIntegrationTest {
     @DisplayName("POST /files")
     internal inner class PostFiles {
         @Test
-        @WithMockUser(username = "admin", password = "hunter2", roles = ["USER"])
+        @WithMockUser(username = DEFAULT_USERNAME, password = DEFAULT_PASSWORD, roles = [DEFAULT_ROLE])
         fun `should upload file and persist metadata`() {
             val metadata = FileUploadMetadata(
                 name = "test.txt",
@@ -62,7 +67,7 @@ internal class FileControllerIntegrationTest {
         }
 
         @Test
-        @WithMockUser(username = "admin", password = "hunter2", roles = ["USER"])
+        @WithMockUser(username = DEFAULT_USERNAME, password = DEFAULT_PASSWORD, roles = [DEFAULT_ROLE])
         fun `should return bad request when name is missing`() {
             val metadata = FileUploadMetadata(
                 name = "",
@@ -80,7 +85,7 @@ internal class FileControllerIntegrationTest {
         }
 
         @Test
-        @WithMockUser(username = "admin", password = "hunter2", roles = ["USER"])
+        @WithMockUser(username = DEFAULT_USERNAME, password = DEFAULT_PASSWORD, roles = [DEFAULT_ROLE])
         fun `should return bad request when content type is missing`() {
             val metadata = FileUploadMetadata(
                 name = "test.txt",
@@ -98,7 +103,7 @@ internal class FileControllerIntegrationTest {
         }
 
         @Test
-        @WithMockUser(username = "admin", password = "hunter2", roles = ["USER"])
+        @WithMockUser(username = DEFAULT_USERNAME, password = DEFAULT_PASSWORD, roles = [DEFAULT_ROLE])
         fun `should return bad request when meta is missing`() {
             val metadata = FileUploadMetadata(
                 name = "test.txt",
@@ -116,7 +121,7 @@ internal class FileControllerIntegrationTest {
         }
 
         @Test
-        @WithMockUser(username = "admin", password = "hunter2", roles = ["USER"])
+        @WithMockUser(username = DEFAULT_USERNAME, password = DEFAULT_PASSWORD, roles = [DEFAULT_ROLE])
         fun `should return bad request when source is missing`() {
             val metadata = FileUploadMetadata(
                 name = "test.txt",
@@ -150,7 +155,7 @@ internal class FileControllerIntegrationTest {
         }
 
         @Test
-        @WithMockUser(username = "admin", password = "hunter2", roles = ["USER"])
+        @WithMockUser(username = DEFAULT_USERNAME, password = DEFAULT_PASSWORD, roles = [DEFAULT_ROLE])
         fun `should return bad request when file is missing`() {
             val metadata = FileUploadMetadata(
                 name = "test.txt",
