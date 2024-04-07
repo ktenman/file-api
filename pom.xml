@@ -179,6 +179,10 @@
                         </goals>
                     </execution>
                 </executions>
+                <configuration>
+                    <outputDirectory>${project.reporting.outputDirectory}/jacoco-html</outputDirectory>
+                    <outputFormat>html</outputFormat>
+                </configuration>
             </plugin>
         </plugins>
     </build>
