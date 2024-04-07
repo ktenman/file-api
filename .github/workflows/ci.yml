@@ -32,8 +32,27 @@ jobs:
       - name: Run tests
         run: mvn test
 
+      - name: Generate Jacoco HTML report
+        run: mvn jacoco:report
+
       - uses: actions/upload-artifact@v3.0.0
         if: always()
         with:
           name: Test reports
-          path: target/surefire-reports
+          path: target/site/jacoco
+
+  auto-merge-dependabot:
+    name: 🤖 Auto merge dependabot PR
+    needs: [ test ]
+    if: github.actor == 'dependabot[bot]' && github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: 🤖Merge PR from dependabot
+        uses: fastify/github-action-merge-dependabot@v3.10.1
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          target: minor
+          merge-method: rebase
