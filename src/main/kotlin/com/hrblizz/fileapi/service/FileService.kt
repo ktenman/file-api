@@ -29,4 +29,9 @@ class FileService(
         return token
     }
 
+    fun getFilesByMetadata(tokens: List<String>): Map<String, FileMetadata> {
+        val files = fileMetadataRepository.findAllById(tokens)
+        return files.associateBy { it.token }
+    }
+
 }

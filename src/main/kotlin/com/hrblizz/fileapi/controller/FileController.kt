@@ -1,11 +1,14 @@
 package com.hrblizz.fileapi.controller
 
+import com.hrblizz.fileapi.rest.FileMetaRequest
+import com.hrblizz.fileapi.rest.FileMetaResponse
 import com.hrblizz.fileapi.rest.FileUploadMetadata
 import com.hrblizz.fileapi.rest.FileUploadResponse
 import com.hrblizz.fileapi.service.FileService
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RequestPart
@@ -28,5 +31,11 @@ class FileController(
     ): FileUploadResponse {
         val token = fileService.uploadFile(request, file)
         return FileUploadResponse(token)
+    }
+
+    @PostMapping("/metas")
+    fun getFilesByMetadata(@RequestBody request: FileMetaRequest): FileMetaResponse {
+        val files = fileService.getFilesByMetadata(request.tokens)
+        return FileMetaResponse(files)
     }
 }

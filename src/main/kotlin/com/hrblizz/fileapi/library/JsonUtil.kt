@@ -44,4 +44,31 @@ object JsonUtil {
             ""
         }
     }
+
+    /**
+     * Safely reads the input JSON string into an object of the specified class.
+     *
+     * @param json The JSON string to be deserialized.
+     * @param clazz The class of the object to be deserialized.
+     * @return The deserialized object, or null if deserialization fails.
+     */
+    fun <T> fromJson(json: String, clazz: Class<T>): T {
+        return try {
+            objectMapper.readValue(json, clazz)
+        } catch (e: Exception) {
+            // Return null if deserialization fails
+            throw e
+        }
+    }
+
+    /**
+     * Safely reads the input JSON string into an object of the specified class.
+     * This is a reified version of the [fromJson] function.
+     * @param json The JSON string to be deserialized.
+     * @return The deserialized object, or null if deserialization fails.
+     */
+    inline fun <reified T> fromJson(json: String): T {
+        return fromJson(json, T::class.java)
+    }
+
 }
