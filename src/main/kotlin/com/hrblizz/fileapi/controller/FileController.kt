@@ -4,6 +4,7 @@ import com.hrblizz.fileapi.rest.FileUploadMetadata
 import com.hrblizz.fileapi.rest.FileUploadResponse
 import com.hrblizz.fileapi.service.FileService
 import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
@@ -19,7 +20,7 @@ class FileController(
     private val fileService: FileService
 ) {
 
-    @PostMapping(consumes = ["multipart/form-data"])
+    @PostMapping(consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
     @ResponseStatus(HttpStatus.CREATED)
     fun uploadFile(
         @Valid @RequestPart("metadata") request: FileUploadMetadata,
