@@ -1,14 +1,13 @@
 package com.hrblizz.fileapi.controller
 
+import com.hrblizz.fileapi.rest.FileDownloadResponse
 import com.hrblizz.fileapi.rest.FileMetaRequest
 import com.hrblizz.fileapi.rest.FileMetaResponse
 import com.hrblizz.fileapi.rest.FileUploadMetadata
 import com.hrblizz.fileapi.rest.FileUploadResponse
 import com.hrblizz.fileapi.service.FileService
-import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
-import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -44,13 +43,9 @@ class FileController(
     }
 
     @GetMapping("/{token}")
-    fun downloadFile(@PathVariable token: String): ResponseEntity<ByteArray> {
+    fun downloadFile(@PathVariable token: String): FileDownloadResponse {
         val fileData = fileService.downloadFile(token)
-        val headers = HttpHeaders()
-        headers["X-Filename"] = fileData.name
-        headers["X-Filesize"] = fileData.size.toString()
-        headers["X-CreateTime"] = fileData.createTime.toString()
-        headers.contentType = MediaType.parseMediaType(fileData.contentType)
-        return ResponseEntity(fileData.content, headers, HttpStatus.OK)
+        return FileDownloadResponse(fileData)
     }
+
 }
