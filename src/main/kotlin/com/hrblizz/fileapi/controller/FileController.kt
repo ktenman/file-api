@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.media.Encoding
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -59,5 +60,11 @@ class FileController(
     fun downloadFile(@PathVariable token: String): FileDownloadResponse {
         val fileData = fileService.downloadFile(token)
         return FileDownloadResponse(fileData)
+    }
+
+    @DeleteMapping("/{token}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    fun deleteFile(@PathVariable token: String) {
+        fileService.deleteFile(token)
     }
 }

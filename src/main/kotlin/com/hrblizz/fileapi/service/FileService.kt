@@ -45,4 +45,11 @@ class FileService(
         )
     }
 
+    fun deleteFile(token: String) {
+        val fileMetadata = fileMetadataRepository.findByToken(token)
+            .orElseThrow { NotFoundException("File not found with token: $token") }
+        storageService.deleteFile(token)
+        fileMetadataRepository.delete(fileMetadata)
+    }
+
 }

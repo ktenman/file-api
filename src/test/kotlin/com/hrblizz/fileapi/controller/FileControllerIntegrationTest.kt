@@ -13,6 +13,7 @@ import com.hrblizz.fileapi.rest.FileUploadMetadata
 import com.hrblizz.fileapi.storage.StorageService
 import jakarta.annotation.Resource
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
@@ -25,6 +26,7 @@ import org.springframework.mock.web.MockMultipartFile
 import org.springframework.mock.web.MockPart
 import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
@@ -300,6 +302,50 @@ internal class FileControllerIntegrationTest {
             val token = "some-token"
 
             mockMvc.perform(get("/files/$token"))
+                .andExpect(status().isUnauthorized)
+        }
+    }
+
+    @Nested
+    @DisplayName("DELETE /files/{token}")
+    inner class DeleteFileByToken {
+        @Test
+        @WithMockUser(username = DEFAULT_USERNAME, password = DEFAULT_PASSWORD, roles = [DEFAULT_ROLE])
+        fun `should delete file and metadata`() {
+            val metadata = FileMetadata(
+                token = UUID.randomUUID().toString(),
+                name = "test.txt",
+                contentType = MediaType.TEXT_PLAIN_VALUE,
+                meta = "{\"creatorEmployeeId\":1}",
+                source = "test",
+                expireTime = null
+            )
+            mongoTemplate.save(metadata)
+            storageService.uploadFile(file, metadata.token)
+
+            mockMvc.perform(delete("/files/${metadata.token}"))
+                .andExpect(status().isNoContent)
+
+            assertThat(mongoTemplate.findAll(FileMetadata::class.java)).isEmpty()
+            assertThatThrownBy { storageService.downloadFile(metadata.token) }
+                .isInstanceOf(RuntimeException::class.java)
+                .hasMessage("Error downloading file from minio: ${metadata.token}")
+        }
+
+        @Test
+        @WithMockUser(username = DEFAULT_USERNAME, password = DEFAULT_PASSWORD, roles = [DEFAULT_ROLE])
+        fun `should return not found when file does not exist`() {
+            val token = "non-existent-token"
+
+            mockMvc.perform(delete("/files/$token"))
+                .andExpect(status().isNotFound)
+        }
+
+        @Test
+        fun `should return unauthorized when user is not authenticated`() {
+            val token = "some-token"
+
+            mockMvc.perform(delete("/files/$token"))
                 .andExpect(status().isUnauthorized)
         }
     }

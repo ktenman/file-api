@@ -4,6 +4,7 @@ import com.hrblizz.fileapi.library.log.Logger
 import io.minio.GetObjectArgs
 import io.minio.MinioClient
 import io.minio.PutObjectArgs
+import io.minio.RemoveObjectArgs
 import io.minio.errors.MinioException
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
@@ -36,8 +37,8 @@ class StorageService(
                     .build()
             )
         } catch (e: MinioException) {
-            logger.critical("Error uploading file: ${e.message}")
-            throw RuntimeException("Error uploading file to minio", e)
+            logger.critical("Error uploading file: $fileName")
+            throw RuntimeException("Error uploading file to minio: $fileName", e)
         } catch (e: IOException) {
             logger.critical("Error reading file: ${e.message}")
             throw RuntimeException("Error reading file", e)
@@ -59,11 +60,30 @@ class StorageService(
             )
             return response.readAllBytes()
         } catch (e: MinioException) {
-            logger.error("Error downloading file: ${e.message}")
-            throw RuntimeException("Error downloading file from minio", e)
+            logger.error("Error downloading file: $fileName")
+            throw RuntimeException("Error downloading file from minio: $fileName", e)
         } catch (e: IOException) {
             logger.error("Error reading file: ${e.message}")
             throw RuntimeException("Error reading file", e)
+        }
+    }
+
+    fun deleteFile(fileName: String) {
+        val minioClient = MinioClient.builder()
+            .endpoint(minioUrl)
+            .credentials(accessKey, secretKey)
+            .build()
+        logger.info("Deleting file: $fileName")
+        try {
+            minioClient.removeObject(
+                RemoveObjectArgs.builder()
+                    .bucket(bucketName)
+                    .`object`(fileName)
+                    .build()
+            )
+        } catch (e: MinioException) {
+            logger.error("Error deleting file: $fileName")
+            throw RuntimeException("Error deleting file from minio: $fileName", e)
         }
     }
 }
