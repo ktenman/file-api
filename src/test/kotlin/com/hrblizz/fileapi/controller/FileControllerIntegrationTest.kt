@@ -59,7 +59,7 @@ internal class FileControllerIntegrationTest {
             val metadata = FileUploadMetadata(
                 name = "test.txt",
                 contentType = "text/plain",
-                meta = "Test file",
+                meta = mapOf("creatorEmployeeId" to 1),
                 source = "test",
                 expireTime = null
             )
@@ -73,7 +73,7 @@ internal class FileControllerIntegrationTest {
             val fileMetadata = fileMetadataList.first()
             assertThat(fileMetadata.name).isEqualTo("test.txt")
             assertThat(fileMetadata.contentType).isEqualTo("text/plain")
-            assertThat(fileMetadata.meta).isEqualTo("Test file")
+            assertThat(fileMetadata.meta).isEqualTo("{\"creatorEmployeeId\":1}")
             assertThat(fileMetadata.source).isEqualTo("test")
             val downloadedBytes = storageService.downloadFile(fileMetadata.token)
             assertThat(downloadedBytes).isNotNull
@@ -87,7 +87,7 @@ internal class FileControllerIntegrationTest {
             val metadata = FileUploadMetadata(
                 name = "",
                 contentType = "text/plain",
-                meta = "Test file",
+                meta = mapOf("creatorEmployeeId" to 1),
                 source = "test",
                 expireTime = null
             )
@@ -105,7 +105,7 @@ internal class FileControllerIntegrationTest {
             val metadata = FileUploadMetadata(
                 name = "test.txt",
                 contentType = "",
-                meta = "Test file",
+                meta = mapOf("creatorEmployeeId" to 1),
                 source = "test",
                 expireTime = null
             )
@@ -123,7 +123,7 @@ internal class FileControllerIntegrationTest {
             val metadata = FileUploadMetadata(
                 name = "test.txt",
                 contentType = "text/plain",
-                meta = "",
+                meta = emptyMap(),
                 source = "test",
                 expireTime = null
             )
@@ -132,7 +132,7 @@ internal class FileControllerIntegrationTest {
 
             mockMvc.perform(multipart("/files/upload").file(file).part(metadataPart))
                 .andExpect(status().isBadRequest)
-                .andExpect(jsonPath("$.errors[0]").value("Meta is required"))
+                .andExpect(jsonPath("$.errors[0]").value("Metadata is required"))
         }
 
         @Test
@@ -141,7 +141,7 @@ internal class FileControllerIntegrationTest {
             val metadata = FileUploadMetadata(
                 name = "test.txt",
                 contentType = "text/plain",
-                meta = "Test file",
+                meta = mapOf("creatorEmployeeId" to 1),
                 source = "",
                 expireTime = null
             )
@@ -158,7 +158,7 @@ internal class FileControllerIntegrationTest {
             val metadata = FileUploadMetadata(
                 name = "test.txt",
                 contentType = "text/plain",
-                meta = "Test file",
+                meta = mapOf("creatorEmployeeId" to 1),
                 source = "test",
                 expireTime = null
             )
@@ -175,7 +175,7 @@ internal class FileControllerIntegrationTest {
             val metadata = FileUploadMetadata(
                 name = "test.txt",
                 contentType = "text/plain",
-                meta = "Test file",
+                meta = mapOf("creatorEmployeeId" to 1),
                 source = "test",
                 expireTime = null
             )

@@ -3,6 +3,7 @@ package com.hrblizz.fileapi.service
 import com.hrblizz.fileapi.controller.exception.NotFoundException
 import com.hrblizz.fileapi.data.entities.FileMetadata
 import com.hrblizz.fileapi.data.repository.FileMetadataRepository
+import com.hrblizz.fileapi.library.JsonUtil
 import com.hrblizz.fileapi.rest.FileData
 import com.hrblizz.fileapi.rest.FileUploadMetadata
 import com.hrblizz.fileapi.storage.StorageService
@@ -16,10 +17,11 @@ class FileService(
 ) {
 
     fun uploadFile(metadata: FileUploadMetadata, file: MultipartFile): String {
+        val metaJson = JsonUtil.toJson(metadata.meta)
         val fileMetadata = FileMetadata(
             name = metadata.name,
             contentType = metadata.contentType,
-            meta = metadata.meta,
+            meta = metaJson,
             source = metadata.source,
             expireTime = metadata.expireTime
         )
