@@ -1,18 +1,14 @@
 package com.hrblizz.fileapi.storage
 
 import com.hrblizz.fileapi.library.log.Logger
+import io.minio.GetObjectArgs
+import io.minio.MinioClient
+import io.minio.PutObjectArgs
+import io.minio.errors.MinioException
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
-import software.amazon.awssdk.auth.credentials.AwsBasicCredentials
-import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider
-import software.amazon.awssdk.core.exception.SdkException
-import software.amazon.awssdk.core.sync.RequestBody
-import software.amazon.awssdk.regions.Region
-import software.amazon.awssdk.services.s3.S3Client
-import software.amazon.awssdk.services.s3.model.GetObjectRequest
-import software.amazon.awssdk.services.s3.model.PutObjectRequest
-import java.net.URI
+import java.io.IOException
 
 @Service
 class StorageService(
@@ -22,40 +18,52 @@ class StorageService(
     @Value("\${minio.bucket-name}") private val bucketName: String,
     private val logger: Logger
 ) {
-    private val s3Client = S3Client.builder()
-        .endpointOverride(URI.create(minioUrl))
-        .region(Region.EU_CENTRAL_1)
-        .credentialsProvider(StaticCredentialsProvider.create(AwsBasicCredentials.create(accessKey, secretKey)))
-        .build()
-
     fun uploadFile(file: MultipartFile, fileName: String) {
         logger.info("Uploading file: $fileName")
+        val minioClient = MinioClient.builder()
+            .endpoint(minioUrl)
+            .credentials(accessKey, secretKey)
+            .build()
         try {
             require(!file.isEmpty && file.size > 0) { "Cannot upload an empty file" }
             require(fileName != "") { "File name cannot be empty" }
-            val putObjectRequest = PutObjectRequest.builder()
-                .bucket(bucketName)
-                .key(fileName)
-                .build()
-            s3Client.putObject(putObjectRequest, RequestBody.fromBytes(file.bytes))
-        } catch (e: SdkException) {
+
+            minioClient.putObject(
+                PutObjectArgs.builder()
+                    .bucket(bucketName)
+                    .`object`(fileName)
+                    .stream(file.inputStream, file.size, -1)
+                    .build()
+            )
+        } catch (e: MinioException) {
             logger.critical("Error uploading file: ${e.message}")
             throw RuntimeException("Error uploading file to minio", e)
+        } catch (e: IOException) {
+            logger.critical("Error reading file: ${e.message}")
+            throw RuntimeException("Error reading file", e)
         }
     }
 
     fun downloadFile(fileName: String): ByteArray {
+        val minioClient = MinioClient.builder()
+            .endpoint(minioUrl)
+            .credentials(accessKey, secretKey)
+            .build()
         logger.info("Downloading file: $fileName")
         try {
-            val getObjectRequest = GetObjectRequest.builder()
-                .bucket(bucketName)
-                .key(fileName)
-                .build()
-            val response = s3Client.getObject(getObjectRequest)
+            val response = minioClient.getObject(
+                GetObjectArgs.builder()
+                    .bucket(bucketName)
+                    .`object`(fileName)
+                    .build()
+            )
             return response.readAllBytes()
-        } catch (e: SdkException) {
+        } catch (e: MinioException) {
             logger.error("Error downloading file: ${e.message}")
             throw RuntimeException("Error downloading file from minio", e)
+        } catch (e: IOException) {
+            logger.error("Error reading file: ${e.message}")
+            throw RuntimeException("Error reading file", e)
         }
     }
 }
