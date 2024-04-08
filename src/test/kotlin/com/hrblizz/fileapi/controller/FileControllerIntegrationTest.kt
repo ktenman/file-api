@@ -17,13 +17,16 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.data.mongodb.core.dropCollection
+import org.springframework.http.MediaType
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.mock.web.MockMultipartFile
 import org.springframework.mock.web.MockPart
 import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.util.*
@@ -93,7 +96,7 @@ internal class FileControllerIntegrationTest {
 
             mockMvc.perform(multipart("/files").file(file).part(metadataPart))
                 .andExpect(status().isBadRequest)
-                .andExpect(jsonPath("$.errors[0].message").value("name: Name is required"))
+                .andExpect(jsonPath("$.body.errors[0].message").value("name: Name is required"))
         }
 
         @Test
@@ -111,7 +114,7 @@ internal class FileControllerIntegrationTest {
 
             mockMvc.perform(multipart("/files").file(file).part(metadataPart))
                 .andExpect(status().isBadRequest)
-                .andExpect(jsonPath("$.errors[0].message").value("contentType: Content type is required"))
+                .andExpect(jsonPath("$.body.errors[0].message").value("contentType: Content type is required"))
         }
 
         @Test
@@ -129,7 +132,7 @@ internal class FileControllerIntegrationTest {
 
             mockMvc.perform(multipart("/files").file(file).part(metadataPart))
                 .andExpect(status().isBadRequest)
-                .andExpect(jsonPath("$.errors[0].message").value("meta: Meta is required"))
+                .andExpect(jsonPath("$.body.errors[0].message").value("meta: Meta is required"))
         }
 
         @Test
@@ -147,7 +150,7 @@ internal class FileControllerIntegrationTest {
 
             mockMvc.perform(multipart("/files").file(file).part(metadataPart))
                 .andExpect(status().isBadRequest)
-                .andExpect(jsonPath("$.errors[0].message").value("source: Source is required"))
+                .andExpect(jsonPath("$.body.errors[0].message").value("source: Source is required"))
         }
 
         @Test
@@ -181,7 +184,7 @@ internal class FileControllerIntegrationTest {
 
             mockMvc.perform(multipart("/files").part(metadataPart))
                 .andExpect(status().isBadRequest)
-                .andExpect(jsonPath("$.errors[0].message").value("file part is missing"))
+                .andExpect(jsonPath("$.body.errors[0].message").value("file part is missing"))
         }
     }
 
@@ -250,6 +253,53 @@ internal class FileControllerIntegrationTest {
                     .contentType(APPLICATION_JSON)
                     .content(JsonUtil.toJson(request))
             ).andExpect(status().isUnauthorized)
+        }
+    }
+
+    @Nested
+    @DisplayName("GET /files/{token}")
+    inner class GetFileByToken {
+        @Test
+        @WithMockUser(username = DEFAULT_USERNAME, password = DEFAULT_PASSWORD, roles = [DEFAULT_ROLE])
+        fun `should download file with metadata`() {
+            val metadata = FileMetadata(
+                token = UUID.randomUUID().toString(),
+                name = "test.txt",
+                contentType = MediaType.TEXT_PLAIN_VALUE,
+                meta = "Test file 1",
+                source = "test",
+                expireTime = null
+            )
+            mongoTemplate.save(metadata)
+            storageService.uploadFile(file, metadata.token)
+
+            val result = mockMvc.perform(get("/files/${metadata.token}"))
+                .andExpect(status().isOk)
+                .andExpect(header().string("X-Filename", "test.txt"))
+                .andExpect(header().string("X-Filesize", file.size.toString()))
+                .andExpect(header().exists("X-CreateTime"))
+                .andExpect(header().string("Content-Type", MediaType.TEXT_PLAIN_VALUE))
+                .andReturn()
+
+            val downloadedContent = result.response.contentAsString
+            assertThat(downloadedContent).isEqualTo("Test content")
+        }
+
+        @Test
+        @WithMockUser(username = DEFAULT_USERNAME, password = DEFAULT_PASSWORD, roles = [DEFAULT_ROLE])
+        fun `should return not found when file does not exist`() {
+            val token = "non-existent-token"
+
+            mockMvc.perform(get("/files/$token"))
+                .andExpect(status().isNotFound)
+        }
+
+        @Test
+        fun `should return unauthorized when user is not authenticated`() {
+            val token = "some-token"
+
+            mockMvc.perform(get("/files/$token"))
+                .andExpect(status().isUnauthorized)
         }
     }
 }

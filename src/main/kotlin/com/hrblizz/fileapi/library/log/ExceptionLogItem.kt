@@ -4,18 +4,20 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import java.io.PrintWriter
 import java.io.StringWriter
 
-open class ExceptionLogItem constructor(
-    message: String,
-    @JsonIgnore val exception: Exception
-) : LogItem("$message: <${exception::class.java.name}>") {
+data class ExceptionLogItem(
+    override val message: String,
+    @JsonIgnore val exception: Exception,
+    override var correlationId: String? = null
+) : LogItem(message) {
+
+    @JsonIgnore
     val stacktrace: String
 
     init {
-        this.type = "exception"
-
+        type = "exception"
         val stringWriter = StringWriter()
         exception.printStackTrace(PrintWriter(stringWriter))
-        this.stacktrace = stringWriter.toString()
+        stacktrace = stringWriter.toString()
     }
 
     override fun toString(): String {

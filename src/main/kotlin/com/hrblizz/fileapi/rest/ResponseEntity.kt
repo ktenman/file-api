@@ -1,22 +1,26 @@
-package com.hrblizz.fileapi.rest
+import com.hrblizz.fileapi.rest.ErrorMessage
 
-class ResponseEntity<T> {
-    var data: T? = null
+data class ResponseEntity<T>(
+    val data: T? = null,
+    val errors: List<ErrorMessage>? = null,
+    val status: Int
+) {
+    companion object {
+        operator fun <T> invoke(status: Int): ResponseEntity<T> {
+            return ResponseEntity(null, null, status)
+        }
 
-    var errors: List<ErrorMessage>? = null
+        operator fun <T> invoke(data: T?, status: Int): ResponseEntity<T> {
+            return ResponseEntity(data, null, status)
+        }
 
-    var status: Int = 0
-        private set
-
-    constructor(status: Int) {
-        this.status = status
-    }
-
-    constructor(data: T?, status: Int) : this(data, null, status) {}
-
-    constructor(data: T?, errors: List<ErrorMessage>?, status: Int) {
-        this.data = data
-        this.errors = errors
-        this.status = status
+        operator fun <T> invoke(data: T?, errors: List<ErrorMessage>?, status: Int): ResponseEntity<T> {
+            return ResponseEntity(data, errors, status)
+        }
     }
 }
+
+data class ErrorMessage(
+    val code: String,
+    val message: String
+)
