@@ -1,6 +1,5 @@
 package com.hrblizz.fileapi.library
 
-import com.hrblizz.fileapi.library.log.CORRELATION_ID
 import com.hrblizz.fileapi.library.log.Logger
 import com.hrblizz.fileapi.library.log.TraceLogItem
 import jakarta.servlet.http.HttpServletRequest
@@ -8,6 +7,8 @@ import jakarta.servlet.http.HttpServletResponse
 import org.slf4j.MDC
 import org.springframework.stereotype.Component
 import org.springframework.web.servlet.HandlerInterceptor
+
+const val CORRELATION_ID = "correlationId"
 
 @Component
 class LoggerRequestInterceptor(
@@ -19,6 +20,7 @@ class LoggerRequestInterceptor(
         response: HttpServletResponse,
         handler: Any
     ): Boolean {
+        MDC.put(CORRELATION_ID, MDC.get(CORRELATION_ID) ?: java.util.UUID.randomUUID().toString())
         request.setAttribute("start_time", System.nanoTime())
         return true
     }

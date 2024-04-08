@@ -22,4 +22,9 @@ data class FileMetadata(
     val source: String,
     val createTime: Instant = Instant.now(),
     val expireTime: Instant?
-)
+) {
+
+    fun isNotExpired(currentTime: Instant): Boolean {
+        return expireTime?.isAfter(currentTime) ?: true
+    }
+}

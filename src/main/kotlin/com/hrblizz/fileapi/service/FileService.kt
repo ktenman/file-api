@@ -9,6 +9,7 @@ import com.hrblizz.fileapi.rest.FileUploadMetadata
 import com.hrblizz.fileapi.storage.StorageService
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
+import java.time.Instant
 
 @Service
 class FileService(
@@ -30,11 +31,13 @@ class FileService(
         return fileMetadata.token
     }
 
-    fun getFilesByMetadata(tokens: List<String>): List<FileMetadata> = fileMetadataRepository.findAllByTokenIn(tokens)
+    fun getFilesByMetadata(tokens: List<String>): List<FileMetadata> {
+        val now = Instant.now()
+        return fileMetadataRepository.findAllByTokenInAndExpireTimeGreaterThanOrExpireTimeIsNull(tokens, now)
+    }
 
     fun downloadFile(token: String): FileData {
-        val fileMetadata = fileMetadataRepository.findByToken(token)
-            .orElseThrow { NotFoundException("File not found with token: $token") }
+        val fileMetadata = getFileMetadata(token)
         val fileContent = storageService.downloadFile(token)
         return FileData(
             name = fileMetadata.name,
@@ -53,8 +56,18 @@ class FileService(
     }
 
     fun getFileMetadata(token: String): FileMetadata {
+        val now = Instant.now()
         return fileMetadataRepository.findByToken(token)
+            .filter { it.isNotExpired(now) }
             .orElseThrow { NotFoundException("File not found with token: $token") }
+    }
+
+    fun removeExpiredFiles(currentTime: Instant) {
+        val expiredFiles = fileMetadataRepository.findByExpireTimeBefore(currentTime)
+        expiredFiles.forEach {
+            storageService.deleteFile(it.token)
+            fileMetadataRepository.delete(it)
+        }
     }
 
 }

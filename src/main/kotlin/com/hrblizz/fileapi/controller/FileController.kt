@@ -50,8 +50,12 @@ class FileController(
 
     @GetMapping
     fun getFilesByMetadata(@RequestParam tokens: Array<String>): FileMetaResponse {
+        if (tokens.isEmpty()) {
+            return FileMetaResponse(emptyList())
+        }
         val files = fileService.getFilesByMetadata(tokens.toList())
-        return FileMetaResponse(files)
+        val fileMetaResponse = FileMetaResponse(files)
+        return fileMetaResponse
     }
 
     @GetMapping("/{token}/content")

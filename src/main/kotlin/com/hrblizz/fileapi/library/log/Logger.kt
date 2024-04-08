@@ -1,5 +1,6 @@
 package com.hrblizz.fileapi.library.log
 
+import com.hrblizz.fileapi.library.CORRELATION_ID
 import org.slf4j.MDC
 import org.springframework.stereotype.Component
 
@@ -13,18 +14,6 @@ class Logger {
         info(LogItem(string))
     }
 
-    fun warning(logItem: LogItem) {
-        write("warning", logItem)
-    }
-
-    fun warn(string: String) {
-        warning(string)
-    }
-
-    fun warning(string: String) {
-        warning(LogItem(string))
-    }
-
     fun error(logItem: LogItem) {
         write("error", logItem)
     }
@@ -34,7 +23,7 @@ class Logger {
     }
 
     fun critical(logItem: LogItem) {
-        write("crit", logItem)
+        write("critical", logItem)
     }
 
     fun critical(string: String) {
