@@ -1,5 +1,7 @@
 package com.hrblizz.fileapi.library
 
+import com.hrblizz.fileapi.library.log.ExceptionLogItem
+import com.hrblizz.fileapi.library.log.Logger
 import com.hrblizz.fileapi.rest.ErrorMessage
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -10,10 +12,13 @@ import org.springframework.web.bind.support.WebExchangeBindException
 import org.springframework.web.multipart.support.MissingServletRequestPartException
 
 @ControllerAdvice
-class RestExceptionHandler {
+class RestExceptionHandler(
+    private val logger: Logger
+) {
 
     @ExceptionHandler(IllegalStateException::class)
     fun handleIllegalStateException(exception: IllegalStateException): ResponseEntity<ErrorMessage> {
+        logException(exception, "Illegal state exception occurred")
         return ResponseEntity(
             ErrorMessage(
                 code = "illegal_state",
@@ -25,6 +30,7 @@ class RestExceptionHandler {
 
     @ExceptionHandler(MissingServletRequestPartException::class)
     fun handleMissingRequestPartException(exception: MissingServletRequestPartException): ResponseEntity<ErrorMessage> {
+        logException(exception, "Missing request part exception occurred")
         return ResponseEntity(
             ErrorMessage(
                 code = "missing_request_part",
@@ -39,6 +45,7 @@ class RestExceptionHandler {
         MethodArgumentNotValidException::class
     )
     fun handleValidationExceptions(exception: Exception): ResponseEntity<ErrorMessage> {
+        logException(exception, "Validation exception occurred")
         return handleValidationException(exception)
     }
 
@@ -64,4 +71,7 @@ class RestExceptionHandler {
         return bindingResult.fieldErrors.associate { it.field to (it.defaultMessage ?: "Validation error") }
     }
 
+    private fun logException(exception: Exception, message: String) {
+        this.logger.error(ExceptionLogItem(message, exception))
+    }
 }
