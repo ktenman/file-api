@@ -8,7 +8,15 @@ import java.util.*
 
 data class FileMetaResponse(
     val files: Map<String, FileMetaDataResponse>
-)
+) {
+    companion object {
+        operator fun invoke(fileMetadata: List<FileMetadata>): FileMetaResponse {
+            return FileMetaResponse(
+                files = fileMetadata.associateBy({ it.token }, { FileMetaDataResponse(it) })
+            )
+        }
+    }
+}
 
 data class FileMetaDataResponse(
     val token: String = UUID.randomUUID().toString(),

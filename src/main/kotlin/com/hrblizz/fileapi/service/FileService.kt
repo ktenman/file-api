@@ -5,7 +5,6 @@ import com.hrblizz.fileapi.data.entities.FileMetadata
 import com.hrblizz.fileapi.data.repository.FileMetadataRepository
 import com.hrblizz.fileapi.library.JsonUtil
 import com.hrblizz.fileapi.rest.FileData
-import com.hrblizz.fileapi.rest.FileMetaDataResponse
 import com.hrblizz.fileapi.rest.FileUploadMetadata
 import com.hrblizz.fileapi.storage.StorageService
 import org.springframework.stereotype.Service
@@ -31,10 +30,7 @@ class FileService(
         return fileMetadata.token
     }
 
-    fun getFilesByMetadata(tokens: List<String>): Map<String, FileMetaDataResponse> =
-        fileMetadataRepository.findAllByTokenIn(tokens)
-            .map { FileMetaDataResponse(it) }
-            .associateBy { it.token }
+    fun getFilesByMetadata(tokens: List<String>): List<FileMetadata> = fileMetadataRepository.findAllByTokenIn(tokens)
 
     fun downloadFile(token: String): FileData {
         val fileMetadata = fileMetadataRepository.findByToken(token)
