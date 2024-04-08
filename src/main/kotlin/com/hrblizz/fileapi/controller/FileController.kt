@@ -1,6 +1,7 @@
 package com.hrblizz.fileapi.controller
 
 import com.hrblizz.fileapi.rest.FileDownloadResponse
+import com.hrblizz.fileapi.rest.FileMetaDataResponse
 import com.hrblizz.fileapi.rest.FileMetaRequest
 import com.hrblizz.fileapi.rest.FileMetaResponse
 import com.hrblizz.fileapi.rest.FileUploadMetadata
@@ -66,5 +67,11 @@ class FileController(
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun deleteFile(@PathVariable token: String) {
         fileService.deleteFile(token)
+    }
+
+    @GetMapping("/{token}/meta")
+    fun getFileMetadata(@PathVariable token: String): FileMetaDataResponse {
+        val fileMetadata = fileService.getFileMetadata(token)
+        return FileMetaDataResponse(fileMetadata)
     }
 }

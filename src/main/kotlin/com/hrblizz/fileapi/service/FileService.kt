@@ -52,4 +52,9 @@ class FileService(
         fileMetadataRepository.delete(fileMetadata)
     }
 
+    fun getFileMetadata(token: String): FileMetadata {
+        return fileMetadataRepository.findByToken(token)
+            .orElseThrow { NotFoundException("File not found with token: $token") }
+    }
+
 }
