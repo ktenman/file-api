@@ -1,5 +1,7 @@
 package com.hrblizz.fileapi.library
 
+import com.hrblizz.fileapi.controller.exception.BadRequestException
+import com.hrblizz.fileapi.controller.exception.NotFoundException
 import com.hrblizz.fileapi.library.log.ExceptionLogItem
 import com.hrblizz.fileapi.library.log.Logger
 import com.hrblizz.fileapi.rest.ErrorMessage
@@ -15,6 +17,30 @@ import org.springframework.web.multipart.support.MissingServletRequestPartExcept
 class RestExceptionHandler(
     private val logger: Logger
 ) {
+
+    @ExceptionHandler(NotFoundException::class)
+    fun handleNotFoundException(exception: NotFoundException): ResponseEntity<ErrorMessage> {
+        logException(exception, "Not found exception occurred")
+        return ResponseEntity(
+            ErrorMessage(
+                code = "not_found",
+                message = exception.message ?: "Not found"
+            ),
+            HttpStatus.NOT_FOUND
+        )
+    }
+
+    @ExceptionHandler(BadRequestException::class)
+    fun handleBadRequestException(exception: BadRequestException): ResponseEntity<ErrorMessage> {
+        logException(exception, "Bad request exception occurred")
+        return ResponseEntity(
+            ErrorMessage(
+                code = "bad_request",
+                message = exception.message ?: "Bad request"
+            ),
+            HttpStatus.BAD_REQUEST
+        )
+    }
 
     @ExceptionHandler(IllegalStateException::class)
     fun handleIllegalStateException(exception: IllegalStateException): ResponseEntity<ErrorMessage> {

@@ -1,4 +1,4 @@
-package com.hrblizz.fileapi.controller
+package com.hrblizz.fileapi.cntroller
 
 import com.hrblizz.fileapi.IntegrationTest
 import com.hrblizz.fileapi.IntegrationTest.Companion.DEFAULT_PASSWORD
@@ -7,7 +7,6 @@ import com.hrblizz.fileapi.IntegrationTest.Companion.DEFAULT_USERNAME
 import com.hrblizz.fileapi.data.entities.FileMetadata
 import com.hrblizz.fileapi.library.JsonUtil
 import com.hrblizz.fileapi.rest.FileMetaDataResponse
-import com.hrblizz.fileapi.rest.FileMetaRequest
 import com.hrblizz.fileapi.rest.FileMetaResponse
 import com.hrblizz.fileapi.rest.FileUploadMetadata
 import com.hrblizz.fileapi.storage.StorageService
@@ -29,11 +28,12 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.util.*
+
 
 @IntegrationTest
 internal class FileControllerIntegrationTest {
@@ -54,8 +54,9 @@ internal class FileControllerIntegrationTest {
     }
 
     @Nested
-    @DisplayName("POST /files/upload")
+    @DisplayName("POST /files")
     internal inner class PostFiles {
+        private val urlTemplate = "/files"
         @Test
         @WithMockUser(username = DEFAULT_USERNAME, password = DEFAULT_PASSWORD, roles = [DEFAULT_ROLE])
         fun `should upload file and persist metadata`() {
@@ -69,7 +70,7 @@ internal class FileControllerIntegrationTest {
             val metadataPart = MockPart("metadata", JsonUtil.toJson(metadata).toByteArray())
             metadataPart.headers.contentType = APPLICATION_JSON
 
-            mockMvc.perform(multipart("/files/upload").file(file).part(metadataPart)).andExpect(status().isCreated)
+            mockMvc.perform(multipart(urlTemplate).file(file).part(metadataPart)).andExpect(status().isCreated)
 
             val fileMetadataList = mongoTemplate.findAll(FileMetadata::class.java)
             assertThat(fileMetadataList).isNotNull.hasSize(1)
@@ -97,7 +98,7 @@ internal class FileControllerIntegrationTest {
             val metadataPart = MockPart("metadata", JsonUtil.toJson(metadata).toByteArray())
             metadataPart.headers.contentType = APPLICATION_JSON
 
-            mockMvc.perform(multipart("/files/upload").file(file).part(metadataPart))
+            mockMvc.perform(multipart(urlTemplate).file(file).part(metadataPart))
                 .andExpect(status().isBadRequest)
                 .andExpect(jsonPath("$.errors[0]").value("Name is required"))
         }
@@ -115,7 +116,7 @@ internal class FileControllerIntegrationTest {
             val metadataPart = MockPart("metadata", JsonUtil.toJson(metadata).toByteArray())
             metadataPart.headers.contentType = APPLICATION_JSON
 
-            mockMvc.perform(multipart("/files/upload").file(file).part(metadataPart))
+            mockMvc.perform(multipart(urlTemplate).file(file).part(metadataPart))
                 .andExpect(status().isBadRequest)
                 .andExpect(jsonPath("$.errors[0]").value("Content type is required"))
         }
@@ -133,7 +134,7 @@ internal class FileControllerIntegrationTest {
             val metadataPart = MockPart("metadata", JsonUtil.toJson(metadata).toByteArray())
             metadataPart.headers.contentType = APPLICATION_JSON
 
-            mockMvc.perform(multipart("/files/upload").file(file).part(metadataPart))
+            mockMvc.perform(multipart(urlTemplate).file(file).part(metadataPart))
                 .andExpect(status().isBadRequest)
                 .andExpect(jsonPath("$.errors[0]").value("Metadata is required"))
         }
@@ -151,7 +152,7 @@ internal class FileControllerIntegrationTest {
             val metadataPart = MockPart("metadata", JsonUtil.toJson(metadata).toByteArray())
             metadataPart.headers.contentType = APPLICATION_JSON
 
-            mockMvc.perform(multipart("/files/upload").file(file).part(metadataPart))
+            mockMvc.perform(multipart(urlTemplate).file(file).part(metadataPart))
                 .andExpect(status().isBadRequest)
                 .andExpect(jsonPath("$.errors[0]").value("Source is required"))
         }
@@ -168,7 +169,7 @@ internal class FileControllerIntegrationTest {
             val metadataPart = MockPart("metadata", JsonUtil.toJson(metadata).toByteArray())
             metadataPart.headers.contentType = APPLICATION_JSON
 
-            mockMvc.perform(multipart("/files/upload").file(file).part(metadataPart))
+            mockMvc.perform(multipart("/files").file(file).part(metadataPart))
                 .andExpect(status().isUnauthorized)
         }
 
@@ -185,14 +186,14 @@ internal class FileControllerIntegrationTest {
             val metadataPart = MockPart("metadata", JsonUtil.toJson(metadata).toByteArray())
             metadataPart.headers.contentType = APPLICATION_JSON
 
-            mockMvc.perform(multipart("/files/upload").part(metadataPart))
+            mockMvc.perform(multipart("/files").part(metadataPart))
                 .andExpect(status().isBadRequest)
                 .andExpect(jsonPath("$.message").value("Required part 'file' is not present."))
         }
     }
 
     @Nested
-    @DisplayName("POST /files/metas")
+    @DisplayName("GET /files?tokens={comma-separated-tokens}")
     inner class GetFilesByMetadata {
         @Test
         @WithMockUser(username = DEFAULT_USERNAME, password = DEFAULT_PASSWORD, roles = [DEFAULT_ROLE])
@@ -215,13 +216,9 @@ internal class FileControllerIntegrationTest {
             )
             mongoTemplate.save(metadata1)
             mongoTemplate.save(metadata2)
-            val request = FileMetaRequest(listOf(metadata1.token, metadata2.token))
+            val tokens = arrayOf(metadata1.token, metadata2.token)
 
-            val result = mockMvc.perform(
-                post("/files/metas")
-                    .contentType(APPLICATION_JSON)
-                    .content(JsonUtil.toJson(request))
-            )
+            val result = mockMvc.perform(get("/files").param("tokens", *tokens))
                 .andExpect(status().isOk)
                 .andReturn()
 
@@ -238,29 +235,71 @@ internal class FileControllerIntegrationTest {
         @Test
         @WithMockUser(username = DEFAULT_USERNAME, password = DEFAULT_PASSWORD, roles = [DEFAULT_ROLE])
         fun `should return empty response when no tokens are provided`() {
-            val request = FileMetaRequest(emptyList())
-
-            mockMvc.perform(
-                post("/files/metas").contentType(APPLICATION_JSON).content(JsonUtil.toJson(request))
-            )
+            mockMvc.perform(get("/files?tokens="))
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("$.files").isEmpty)
         }
 
         @Test
-        fun `should return unauthorized when user is not authenticated`() {
-            val request = FileMetaRequest(listOf("token1"))
+        @WithMockUser(username = DEFAULT_USERNAME, password = DEFAULT_PASSWORD, roles = [DEFAULT_ROLE])
+        fun `should return bad request when tokens are missing`() {
+            mockMvc.perform(get("/files"))
+                .andExpect(status().isBadRequest)
+                .andExpect(content().string(""))
+        }
 
-            mockMvc.perform(
-                post("/files/metas")
-                    .contentType(APPLICATION_JSON)
-                    .content(JsonUtil.toJson(request))
-            ).andExpect(status().isUnauthorized)
+        @Test
+        fun `should return unauthorized when user is not authenticated`() {
+            mockMvc.perform(get("/files").param("tokens", "some-token"))
+                .andExpect(status().isUnauthorized)
+                .andReturn()
         }
     }
 
     @Nested
-    @DisplayName("GET /files/{token}")
+    @DisplayName("GET /files/{token}/meta")
+    inner class GetFileMetadataByToken {
+        @Test
+        @WithMockUser(username = DEFAULT_USERNAME, password = DEFAULT_PASSWORD, roles = [DEFAULT_ROLE])
+        fun `should return file metadata`() {
+            val metadata = FileMetadata(
+                token = UUID.randomUUID().toString(),
+                name = "test.txt",
+                contentType = MediaType.TEXT_PLAIN_VALUE,
+                meta = "{\"creatorEmployeeId\":1}",
+                source = "test",
+                expireTime = null
+            )
+            mongoTemplate.save(metadata)
+
+            val result = mockMvc.perform(get("/files/${metadata.token}/meta"))
+                .andExpect(status().isOk)
+                .andReturn()
+
+            val response: FileMetaDataResponse = JsonUtil.fromJson(result.response.contentAsString)
+            assertThat(response).isEqualTo(FileMetaDataResponse(metadata.copy(createTime = response.createTime)))
+        }
+
+        @Test
+        @WithMockUser(username = DEFAULT_USERNAME, password = DEFAULT_PASSWORD, roles = [DEFAULT_ROLE])
+        fun `should return not found when file metadata does not exist`() {
+            val token = "non-existent-token"
+
+            mockMvc.perform(get("/files/$token/meta"))
+                .andExpect(status().isNotFound)
+        }
+
+        @Test
+        fun `should return unauthorized when user is not authenticated`() {
+            val token = "some-token"
+
+            mockMvc.perform(get("/files/$token/meta"))
+                .andExpect(status().isUnauthorized)
+        }
+    }
+
+    @Nested
+    @DisplayName("GET /files/{token}/content")
     inner class GetFileByToken {
         @Test
         @WithMockUser(username = DEFAULT_USERNAME, password = DEFAULT_PASSWORD, roles = [DEFAULT_ROLE])
@@ -276,7 +315,7 @@ internal class FileControllerIntegrationTest {
             mongoTemplate.save(metadata)
             storageService.uploadFile(file, metadata.token)
 
-            val result = mockMvc.perform(get("/files/${metadata.token}"))
+            val result = mockMvc.perform(get("/files/${metadata.token}/content"))
                 .andExpect(status().isOk)
                 .andExpect(header().string("X-Filename", "test.txt"))
                 .andExpect(header().string("X-Filesize", file.size.toString()))
@@ -293,7 +332,7 @@ internal class FileControllerIntegrationTest {
         fun `should return not found when file does not exist`() {
             val token = "non-existent-token"
 
-            mockMvc.perform(get("/files/$token"))
+            mockMvc.perform(get("/files/$token/content"))
                 .andExpect(status().isNotFound)
         }
 
@@ -301,7 +340,7 @@ internal class FileControllerIntegrationTest {
         fun `should return unauthorized when user is not authenticated`() {
             val token = "some-token"
 
-            mockMvc.perform(get("/files/$token"))
+            mockMvc.perform(get("/files/$token/content"))
                 .andExpect(status().isUnauthorized)
         }
     }
@@ -349,47 +388,4 @@ internal class FileControllerIntegrationTest {
                 .andExpect(status().isUnauthorized)
         }
     }
-
-    @Nested
-    @DisplayName("GET /files/{token}/meta")
-    inner class GetFileMetadataByToken {
-        @Test
-        @WithMockUser(username = DEFAULT_USERNAME, password = DEFAULT_PASSWORD, roles = [DEFAULT_ROLE])
-        fun `should return file metadata`() {
-            val metadata = FileMetadata(
-                token = UUID.randomUUID().toString(),
-                name = "test.txt",
-                contentType = MediaType.TEXT_PLAIN_VALUE,
-                meta = "{\"creatorEmployeeId\":1}",
-                source = "test",
-                expireTime = null
-            )
-            mongoTemplate.save(metadata)
-
-            val result = mockMvc.perform(get("/files/${metadata.token}/meta"))
-                .andExpect(status().isOk)
-                .andReturn()
-
-            val response: FileMetaDataResponse = JsonUtil.fromJson(result.response.contentAsString)
-            assertThat(response).isEqualTo(FileMetaDataResponse(metadata.copy(createTime = response.createTime)))
-        }
-
-        @Test
-        @WithMockUser(username = DEFAULT_USERNAME, password = DEFAULT_PASSWORD, roles = [DEFAULT_ROLE])
-        fun `should return not found when file metadata does not exist`() {
-            val token = "non-existent-token"
-
-            mockMvc.perform(get("/files/$token/meta"))
-                .andExpect(status().isNotFound)
-        }
-
-        @Test
-        fun `should return unauthorized when user is not authenticated`() {
-            val token = "some-token"
-
-            mockMvc.perform(get("/files/$token/meta"))
-                .andExpect(status().isUnauthorized)
-        }
-    }
-
 }

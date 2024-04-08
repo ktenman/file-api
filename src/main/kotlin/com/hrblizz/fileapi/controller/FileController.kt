@@ -2,7 +2,6 @@ package com.hrblizz.fileapi.controller
 
 import com.hrblizz.fileapi.rest.FileDownloadResponse
 import com.hrblizz.fileapi.rest.FileMetaDataResponse
-import com.hrblizz.fileapi.rest.FileMetaRequest
 import com.hrblizz.fileapi.rest.FileMetaResponse
 import com.hrblizz.fileapi.rest.FileUploadMetadata
 import com.hrblizz.fileapi.rest.FileUploadResponse
@@ -16,7 +15,6 @@ import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RequestPart
@@ -31,8 +29,7 @@ class FileController(
 ) {
 
     @PostMapping(
-        consumes = [MediaType.MULTIPART_FORM_DATA_VALUE],
-        path = ["/upload"]
+        consumes = [MediaType.MULTIPART_FORM_DATA_VALUE]
     )
     @ResponseStatus(HttpStatus.CREATED)
     @io.swagger.v3.oas.annotations.parameters.RequestBody(
@@ -51,27 +48,27 @@ class FileController(
         return FileUploadResponse(token)
     }
 
-    @PostMapping("/metas")
-    fun getFilesByMetadata(@RequestBody request: FileMetaRequest): FileMetaResponse {
-        val files = fileService.getFilesByMetadata(request.tokens)
+    @GetMapping
+    fun getFilesByMetadata(@RequestParam tokens: Array<String>): FileMetaResponse {
+        val files = fileService.getFilesByMetadata(tokens.toList())
         return FileMetaResponse(files)
     }
 
-    @GetMapping("/{token}")
+    @GetMapping("/{token}/content")
     fun downloadFile(@PathVariable token: String): FileDownloadResponse {
         val fileData = fileService.downloadFile(token)
         return FileDownloadResponse(fileData)
-    }
-
-    @DeleteMapping("/{token}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    fun deleteFile(@PathVariable token: String) {
-        fileService.deleteFile(token)
     }
 
     @GetMapping("/{token}/meta")
     fun getFileMetadata(@PathVariable token: String): FileMetaDataResponse {
         val fileMetadata = fileService.getFileMetadata(token)
         return FileMetaDataResponse(fileMetadata)
+    }
+
+    @DeleteMapping("/{token}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    fun deleteFile(@PathVariable token: String) {
+        fileService.deleteFile(token)
     }
 }
