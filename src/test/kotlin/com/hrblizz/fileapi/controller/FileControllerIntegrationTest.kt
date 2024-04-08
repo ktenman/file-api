@@ -226,8 +226,8 @@ internal class FileControllerIntegrationTest {
             assertThat(response.files).hasSize(2)
                 .containsExactlyInAnyOrderEntriesOf(
                     mapOf(
-                        metadata1.token to metadata1,
-                        metadata2.token to metadata2
+                        metadata1.token to metadata1.copy(createTime = response.files[metadata1.token]!!.createTime),
+                        metadata2.token to metadata2.copy(createTime = response.files[metadata2.token]!!.createTime)
                     )
                 )
         }
