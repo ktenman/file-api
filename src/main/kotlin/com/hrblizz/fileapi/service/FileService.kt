@@ -9,12 +9,14 @@ import com.hrblizz.fileapi.rest.FileUploadMetadata
 import com.hrblizz.fileapi.storage.StorageService
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
+import java.time.Clock
 import java.time.Instant
 
 @Service
 class FileService(
     private val fileMetadataRepository: FileMetadataRepository,
-    private val storageService: StorageService
+    private val storageService: StorageService,
+    private val clock: Clock
 ) {
 
     fun uploadFile(metadata: FileUploadMetadata, file: MultipartFile): String {
@@ -32,7 +34,7 @@ class FileService(
     }
 
     fun getFilesByMetadata(tokens: List<String>): List<FileMetadata> {
-        val now = Instant.now()
+        val now = Instant.now(clock)
         return fileMetadataRepository.findAllByTokenInAndExpireTimeGreaterThanOrExpireTimeIsNull(tokens, now)
     }
 
@@ -56,7 +58,7 @@ class FileService(
     }
 
     fun getFileMetadata(token: String): FileMetadata {
-        val now = Instant.now()
+        val now = Instant.now(clock)
         return fileMetadataRepository.findByToken(token)
             .filter { it.isNotExpired(now) }
             .orElseThrow { NotFoundException("File not found with token: $token") }

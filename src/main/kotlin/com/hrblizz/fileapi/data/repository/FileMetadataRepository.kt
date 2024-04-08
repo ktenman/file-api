@@ -7,7 +7,6 @@ import java.time.Instant
 import java.util.*
 
 interface FileMetadataRepository : MongoRepository<FileMetadata, ObjectId> {
-    fun findAllByTokenIn(tokens: List<String>): List<FileMetadata>
     fun findByToken(token: String): Optional<FileMetadata>
     fun findByExpireTimeBefore(expirationTime: Instant): List<FileMetadata>
     fun findAllByTokenInAndExpireTimeGreaterThanOrExpireTimeIsNull(

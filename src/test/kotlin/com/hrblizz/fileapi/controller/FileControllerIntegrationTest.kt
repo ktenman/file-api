@@ -17,6 +17,8 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.mockito.kotlin.whenever
+import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.data.mongodb.core.dropCollection
 import org.springframework.http.MediaType
@@ -32,11 +34,16 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import java.time.Clock
+import java.time.Instant
 import java.util.*
 
 
 @IntegrationTest
 internal class FileControllerIntegrationTest {
+
+    @MockBean
+    private lateinit var clock: Clock
 
     @Resource
     private lateinit var mockMvc: MockMvc
@@ -50,6 +57,8 @@ internal class FileControllerIntegrationTest {
 
     @BeforeEach
     fun setUp() {
+        whenever(clock.instant()).thenReturn(Instant.parse("2025-01-01T00:00:00Z"))
+        whenever(clock.zone).thenReturn(Clock.systemUTC().zone)
         mongoTemplate.dropCollection<FileMetadata>()
     }
 
@@ -212,11 +221,20 @@ internal class FileControllerIntegrationTest {
                 contentType = "text/plain",
                 meta = "{\"creatorEmployeeId\":1}",
                 source = "test",
-                expireTime = null
+                expireTime = Instant.parse("2026-01-01T00:00:00Z")
+            )
+            val metadata3 = FileMetadata(
+                token = UUID.randomUUID().toString(),
+                name = "test2.txt",
+                contentType = "text/plain",
+                meta = "{\"creatorEmployeeId\":1}",
+                source = "test",
+                expireTime = Instant.parse("2019-01-01T00:00:00Z")
             )
             mongoTemplate.save(metadata1)
             mongoTemplate.save(metadata2)
-            val tokens = arrayOf(metadata1.token, metadata2.token)
+            mongoTemplate.save(metadata3)
+            val tokens = arrayOf(metadata1.token, metadata2.token, metadata3.token)
 
             val result = mockMvc.perform(get("/files").param("tokens", *tokens))
                 .andExpect(status().isOk)
@@ -278,6 +296,23 @@ internal class FileControllerIntegrationTest {
 
             val response: FileMetaDataResponse = JsonUtil.fromJson(result.response.contentAsString)
             assertThat(response).isEqualTo(FileMetaDataResponse(metadata.copy(createTime = response.createTime)))
+        }
+
+        @Test
+        @WithMockUser(username = DEFAULT_USERNAME, password = DEFAULT_PASSWORD, roles = [DEFAULT_ROLE])
+        fun `should return not found when file is expired`() {
+            val metadata = FileMetadata(
+                token = UUID.randomUUID().toString(),
+                name = "test.txt",
+                contentType = MediaType.TEXT_PLAIN_VALUE,
+                meta = "{\"creatorEmployeeId\":1}",
+                source = "test",
+                expireTime = Instant.parse("2023-01-01T00:00:00Z")
+            )
+            mongoTemplate.save(metadata)
+
+            mockMvc.perform(get("/files/${metadata.token}/meta"))
+                .andExpect(status().isNotFound)
         }
 
         @Test
