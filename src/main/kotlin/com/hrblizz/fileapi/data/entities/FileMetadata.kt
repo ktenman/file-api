@@ -1,6 +1,5 @@
 package com.hrblizz.fileapi.data.entities
 
-import com.fasterxml.jackson.annotation.JsonFormat
 import com.fasterxml.jackson.annotation.JsonIgnore
 import org.bson.types.ObjectId
 import org.springframework.data.annotation.Id
@@ -21,7 +20,6 @@ data class FileMetadata(
     @Field(targetType = FieldType.STRING)
     val meta: String,
     val source: String,
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'", timezone = "UTC")
     val createTime: Instant = Instant.now(),
     val expireTime: Instant?
 )

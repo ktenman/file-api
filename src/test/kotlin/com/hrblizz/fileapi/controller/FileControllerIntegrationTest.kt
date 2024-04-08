@@ -6,6 +6,7 @@ import com.hrblizz.fileapi.IntegrationTest.Companion.DEFAULT_ROLE
 import com.hrblizz.fileapi.IntegrationTest.Companion.DEFAULT_USERNAME
 import com.hrblizz.fileapi.data.entities.FileMetadata
 import com.hrblizz.fileapi.library.JsonUtil
+import com.hrblizz.fileapi.rest.FileMetaDataResponse
 import com.hrblizz.fileapi.rest.FileMetaRequest
 import com.hrblizz.fileapi.rest.FileMetaResponse
 import com.hrblizz.fileapi.rest.FileUploadMetadata
@@ -198,7 +199,7 @@ internal class FileControllerIntegrationTest {
                 token = UUID.randomUUID().toString(),
                 name = "test1.txt",
                 contentType = "text/plain",
-                meta = "Test file 1",
+                meta = "{\"creatorEmployeeId\":1}",
                 source = "test",
                 expireTime = null
             )
@@ -206,7 +207,7 @@ internal class FileControllerIntegrationTest {
                 token = UUID.randomUUID().toString(),
                 name = "test2.txt",
                 contentType = "text/plain",
-                meta = "Test file 2",
+                meta = "{\"creatorEmployeeId\":1}",
                 source = "test",
                 expireTime = null
             )
@@ -223,12 +224,12 @@ internal class FileControllerIntegrationTest {
                 .andReturn()
 
             val response: FileMetaResponse = JsonUtil.fromJson(result.response.contentAsString)
-            assertThat(response.files).hasSize(2)
-                .containsExactlyInAnyOrderEntriesOf(
-                    mapOf(
-                        metadata1.token to metadata1.copy(createTime = response.files[metadata1.token]!!.createTime),
-                        metadata2.token to metadata2.copy(createTime = response.files[metadata2.token]!!.createTime)
-                    )
+            assertThat(response.files)
+                .hasSize(2)
+                .containsKeys(metadata1.token, metadata2.token)
+                .containsValues(
+                    FileMetaDataResponse(metadata1.copy(createTime = response.files[metadata1.token]!!.createTime)),
+                    FileMetaDataResponse(metadata2.copy(createTime = response.files[metadata2.token]!!.createTime))
                 )
         }
 
