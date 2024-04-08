@@ -1,34 +1,40 @@
 package com.hrblizz.fileapi.security
 
+import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
+import org.springframework.security.authentication.AuthenticationProvider
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
 import org.springframework.security.config.http.SessionCreationPolicy
+import org.springframework.security.web.SecurityFilterChain
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher
+
 
 @Configuration
-internal class WebSecurityConfig(
+class WebSecurityConfig(
     private val apiAuthenticationEntryPoint: ApiAuthenticationEntryPoint,
-    private val apiAuthenticationProvider: ApiAuthenticationProvider
-) : WebSecurityConfigurerAdapter() {
-
-    override fun configure(auth: AuthenticationManagerBuilder) {
-        auth.authenticationProvider(apiAuthenticationProvider)
+    private val apiAuthenticationProvider: AuthenticationProvider
+) {
+    companion object {
+        private val ALLOWED_PATHS = listOf(
+            "/docs", "/docs/**", "/webjars/**", "/favicon.ico", "/actuator/**", "/v3/api-docs/**", "/swagger-ui/**"
+        )
     }
 
-    override fun configure(http: HttpSecurity) {
+    @Bean
+    fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
         http
-            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-            .and()
-            .httpBasic().authenticationEntryPoint(apiAuthenticationEntryPoint)
-            .and()
-            .csrf().disable()
+            .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
+            .httpBasic { it.authenticationEntryPoint(apiAuthenticationEntryPoint) }
+            .csrf { it.disable() }
+            .authorizeHttpRequests { authorize ->
+                authorize
+                    .requestMatchers(*ALLOWED_PATHS.map { AntPathRequestMatcher(it) }.toTypedArray())
+                    .permitAll()
+                    .anyRequest()
+                    .fullyAuthenticated()
+            }
+            .authenticationProvider(apiAuthenticationProvider)
 
-        val authorizationConfigurer = http.authorizeRequests()
-        authorizationConfigurer.antMatchers("/docs", "/docs/*").permitAll()
-
-        authorizationConfigurer
-            .antMatchers("/status", "/webjars/**", "/favicon.ico", "/actuator/**").permitAll()
-            .anyRequest().fullyAuthenticated()
+        return http.build()
     }
 }

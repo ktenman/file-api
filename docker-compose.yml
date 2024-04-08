@@ -14,7 +14,7 @@ services:
   minio:
     image: minio/minio
     volumes:
-      - minio_data:/data
+      - minio_files:/data
     ports:
       - 9001:9000
       - 9002:9001
@@ -40,4 +40,4 @@ services:
 
 volumes:
   filedb-data:
-  minio_data:
+  minio_files:

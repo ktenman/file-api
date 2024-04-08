@@ -1,12 +1,12 @@
 package com.hrblizz.fileapi.storage
 
 import com.hrblizz.fileapi.IntegrationTest
+import jakarta.annotation.Resource
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.catchThrowable
 import org.junit.jupiter.api.Test
 import org.springframework.core.io.ClassPathResource
 import org.springframework.mock.web.MockMultipartFile
-import javax.annotation.Resource
 
 @IntegrationTest
 class StorageServiceIntegrationTest {

@@ -10,6 +10,7 @@ import com.hrblizz.fileapi.rest.FileMetaRequest
 import com.hrblizz.fileapi.rest.FileMetaResponse
 import com.hrblizz.fileapi.rest.FileUploadMetadata
 import com.hrblizz.fileapi.storage.StorageService
+import jakarta.annotation.Resource
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
@@ -30,7 +31,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.util.*
-import javax.annotation.Resource
 
 @IntegrationTest
 internal class FileControllerIntegrationTest {
@@ -51,7 +51,7 @@ internal class FileControllerIntegrationTest {
     }
 
     @Nested
-    @DisplayName("POST /files")
+    @DisplayName("POST /files/upload")
     internal inner class PostFiles {
         @Test
         @WithMockUser(username = DEFAULT_USERNAME, password = DEFAULT_PASSWORD, roles = [DEFAULT_ROLE])
@@ -66,7 +66,7 @@ internal class FileControllerIntegrationTest {
             val metadataPart = MockPart("metadata", JsonUtil.toJson(metadata).toByteArray())
             metadataPart.headers.contentType = APPLICATION_JSON
 
-            mockMvc.perform(multipart("/files").file(file).part(metadataPart)).andExpect(status().isCreated)
+            mockMvc.perform(multipart("/files/upload").file(file).part(metadataPart)).andExpect(status().isCreated)
 
             val fileMetadataList = mongoTemplate.findAll(FileMetadata::class.java)
             assertThat(fileMetadataList).isNotNull.hasSize(1)
@@ -94,9 +94,9 @@ internal class FileControllerIntegrationTest {
             val metadataPart = MockPart("metadata", JsonUtil.toJson(metadata).toByteArray())
             metadataPart.headers.contentType = APPLICATION_JSON
 
-            mockMvc.perform(multipart("/files").file(file).part(metadataPart))
+            mockMvc.perform(multipart("/files/upload").file(file).part(metadataPart))
                 .andExpect(status().isBadRequest)
-                .andExpect(jsonPath("$.body.errors[0].message").value("name: Name is required"))
+                .andExpect(jsonPath("$.errors[0]").value("Name is required"))
         }
 
         @Test
@@ -112,9 +112,9 @@ internal class FileControllerIntegrationTest {
             val metadataPart = MockPart("metadata", JsonUtil.toJson(metadata).toByteArray())
             metadataPart.headers.contentType = APPLICATION_JSON
 
-            mockMvc.perform(multipart("/files").file(file).part(metadataPart))
+            mockMvc.perform(multipart("/files/upload").file(file).part(metadataPart))
                 .andExpect(status().isBadRequest)
-                .andExpect(jsonPath("$.body.errors[0].message").value("contentType: Content type is required"))
+                .andExpect(jsonPath("$.errors[0]").value("Content type is required"))
         }
 
         @Test
@@ -130,9 +130,9 @@ internal class FileControllerIntegrationTest {
             val metadataPart = MockPart("metadata", JsonUtil.toJson(metadata).toByteArray())
             metadataPart.headers.contentType = APPLICATION_JSON
 
-            mockMvc.perform(multipart("/files").file(file).part(metadataPart))
+            mockMvc.perform(multipart("/files/upload").file(file).part(metadataPart))
                 .andExpect(status().isBadRequest)
-                .andExpect(jsonPath("$.body.errors[0].message").value("meta: Meta is required"))
+                .andExpect(jsonPath("$.errors[0]").value("Meta is required"))
         }
 
         @Test
@@ -148,9 +148,9 @@ internal class FileControllerIntegrationTest {
             val metadataPart = MockPart("metadata", JsonUtil.toJson(metadata).toByteArray())
             metadataPart.headers.contentType = APPLICATION_JSON
 
-            mockMvc.perform(multipart("/files").file(file).part(metadataPart))
+            mockMvc.perform(multipart("/files/upload").file(file).part(metadataPart))
                 .andExpect(status().isBadRequest)
-                .andExpect(jsonPath("$.body.errors[0].message").value("source: Source is required"))
+                .andExpect(jsonPath("$.errors[0]").value("Source is required"))
         }
 
         @Test
@@ -165,7 +165,7 @@ internal class FileControllerIntegrationTest {
             val metadataPart = MockPart("metadata", JsonUtil.toJson(metadata).toByteArray())
             metadataPart.headers.contentType = APPLICATION_JSON
 
-            mockMvc.perform(multipart("/files").file(file).part(metadataPart))
+            mockMvc.perform(multipart("/files/upload").file(file).part(metadataPart))
                 .andExpect(status().isUnauthorized)
         }
 
@@ -182,9 +182,9 @@ internal class FileControllerIntegrationTest {
             val metadataPart = MockPart("metadata", JsonUtil.toJson(metadata).toByteArray())
             metadataPart.headers.contentType = APPLICATION_JSON
 
-            mockMvc.perform(multipart("/files").part(metadataPart))
+            mockMvc.perform(multipart("/files/upload").part(metadataPart))
                 .andExpect(status().isBadRequest)
-                .andExpect(jsonPath("$.body.errors[0].message").value("file part is missing"))
+                .andExpect(jsonPath("$.message").value("Required part 'file' is not present."))
         }
     }
 

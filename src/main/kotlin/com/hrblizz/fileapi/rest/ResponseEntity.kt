@@ -1,4 +1,4 @@
-import com.hrblizz.fileapi.rest.ErrorMessage
+package com.hrblizz.fileapi.rest
 
 data class ResponseEntity<T>(
     val data: T? = null,
@@ -19,8 +19,3 @@ data class ResponseEntity<T>(
         }
     }
 }
-
-data class ErrorMessage(
-    val code: String,
-    val message: String
-)

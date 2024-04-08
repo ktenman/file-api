@@ -1,6 +1,6 @@
 package com.hrblizz.fileapi.rest
 
-import javax.validation.constraints.NotBlank
+import jakarta.validation.constraints.NotBlank
 
 data class FileUploadMetadata(
     @field:NotBlank(message = "Name is required")

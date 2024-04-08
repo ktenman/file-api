@@ -3,11 +3,11 @@ package com.hrblizz.fileapi.library
 import com.hrblizz.fileapi.library.log.CORRELATION_ID
 import com.hrblizz.fileapi.library.log.Logger
 import com.hrblizz.fileapi.library.log.TraceLogItem
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
 import org.slf4j.MDC
 import org.springframework.stereotype.Component
 import org.springframework.web.servlet.HandlerInterceptor
-import javax.servlet.http.HttpServletRequest
-import javax.servlet.http.HttpServletResponse
 
 @Component
 class LoggerRequestInterceptor(
