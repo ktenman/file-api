@@ -1,4 +1,4 @@
-package com.hrblizz.fileapi.cntroller
+package com.hrblizz.fileapi.controller
 
 import com.hrblizz.fileapi.IntegrationTest
 import com.hrblizz.fileapi.IntegrationTest.Companion.DEFAULT_ROLE
@@ -40,7 +40,7 @@ import java.util.*
 
 
 @IntegrationTest
-internal class FileControllerIntegrationTest {
+class FileControllerIntegrationTest {
 
     @MockBean
     private lateinit var clock: Clock
@@ -425,4 +425,5 @@ internal class FileControllerIntegrationTest {
                 .andExpect(status().isUnauthorized)
         }
     }
+
 }

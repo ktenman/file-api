@@ -75,6 +75,18 @@ class RestExceptionHandler(
         return handleValidationException(exception)
     }
 
+    @ExceptionHandler(Exception::class)
+    fun handleInternalException(exception: Exception): ResponseEntity<ErrorMessage> {
+        logException(exception, "Internal server error occurred")
+        return ResponseEntity(
+            ErrorMessage(
+                code = "internal_server_error",
+                message = "An internal server error occurred"
+            ),
+            HttpStatus.SERVICE_UNAVAILABLE
+        )
+    }
+
     private fun handleValidationException(exception: Exception): ResponseEntity<ErrorMessage> {
         val errors = extractErrors(exception)
 
