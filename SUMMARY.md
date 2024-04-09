@@ -24,9 +24,11 @@ Throughout the project, several Kotlin features and concepts were learned and ap
 * Utilizing companion objects for defining constants and utility methods
 * Working with iterative functions like `associateBy`, `associate`, `filter`, and `map`
 * Configuring the `@IntegrationTest` annotation using the `apply` method
+* Also other Kotlin features
+  like `lateinit`, `when`, `var`, `val`, `invoke`, `fun`, `companion`, `object`, `data`, `open`, `const`, `?`, `!!`, `init`, `runBlocking`, `reified`, `inline`
 * Interacting with MinIO using the MinioClient library
 * Defining multipart requests with JSON metadata in the API documentation using Swagger annotations
-
+* Learned how to use validation annotations like `@NotBlank` as `@field:NotEmpty` in Kotlin
 ## Areas for Improvement
 
 While the project provides a functional implementation, there are several areas that could be enhanced:
@@ -36,6 +38,7 @@ While the project provides a functional implementation, there are several areas 
 3. Implementing distributed locking or caching using Redis to improve performance and handle concurrency
 4. Adding idempotency keys to API requests to prevent duplicate file uploads or modifications
 5. Integrating SonarCloud into the GitHub pipeline for code quality analysis and continuous improvement
+
 ## Conclusion
 
 The File API project serves as a valuable learning experience, showcasing the integration of Kotlin and Spring Boot with

@@ -19,12 +19,13 @@ class StorageService(
     @Value("\${minio.bucket-name}") private val bucketName: String,
     private val logger: Logger
 ) {
+    val minioClient: MinioClient = MinioClient.builder()
+        .endpoint(minioUrl)
+        .credentials(accessKey, secretKey)
+        .build()
+
     fun uploadFile(file: MultipartFile, fileName: String) {
         logger.info("Uploading file: $fileName")
-        val minioClient = MinioClient.builder()
-            .endpoint(minioUrl)
-            .credentials(accessKey, secretKey)
-            .build()
         try {
             require(!file.isEmpty && file.size > 0) { "Cannot upload an empty file" }
             require(fileName != "") { "File name cannot be empty" }
@@ -46,10 +47,6 @@ class StorageService(
     }
 
     fun downloadFile(fileName: String): ByteArray {
-        val minioClient = MinioClient.builder()
-            .endpoint(minioUrl)
-            .credentials(accessKey, secretKey)
-            .build()
         logger.info("Downloading file: $fileName")
         try {
             val response = minioClient.getObject(
@@ -69,10 +66,6 @@ class StorageService(
     }
 
     fun deleteFile(fileName: String) {
-        val minioClient = MinioClient.builder()
-            .endpoint(minioUrl)
-            .credentials(accessKey, secretKey)
-            .build()
         logger.info("Deleting file: $fileName")
         try {
             minioClient.removeObject(
