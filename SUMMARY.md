@@ -37,18 +37,17 @@ While the project provides a functional implementation, there are several areas 
 1. Migrating the authentication mechanism to use **JWT** tokens instead of basic authentication
 2. Associating uploaded files with user information for better tracking and management
 3. Adding **idempotency keys** to API requests to prevent duplicate file uploads or modifications
-4. Integrating SonarCloud into the GitHub pipeline for code quality analysis and continuous improvement
-5. The exception handling could be improved in the StorageService class to provide more informative error messages
-6. The **Pagenation** and **Sorting** could be implemented in the FileService class to handle large datasets
-7. Implementing a rate-limiting mechanism to prevent abuse and ensure fair usage of the API
-8. Enhancing the API documentation with more detailed descriptions, examples, and error responses
-9. Implementing a file versioning system to track changes and allow users to revert to previous versions
-10. Adding support for file search and filtering based on metadata fields
-11. Implementing a file sharing feature to allow users to share files with others securely
-12. Adding support for file encryption and decryption to enhance security and privacy
-13. Implementing a file compression feature to reduce storage space and improve transfer speeds
-14. Adding support for file streaming to enable users to download large files efficiently
-15. Implementing a file preview feature done with AI/ML to generate previews for various file types
+4. The exception handling could be improved in the StorageService class to provide more informative error messages
+5. The **Pagenation** and **Sorting** could be implemented in the FileService class to handle large datasets
+6. Implementing a rate-limiting mechanism to prevent abuse and ensure fair usage of the API
+7. Enhancing the API documentation with more detailed descriptions, examples, and error responses
+8. Implementing a file versioning system to track changes and allow users to revert to previous versions
+9. Adding support for file search and filtering based on metadata fields
+10. Implementing a file sharing feature to allow users to share files with others securely
+11. Adding support for file encryption and decryption to enhance security and privacy
+12. Implementing a file compression feature to reduce storage space and improve transfer speeds
+13. Adding support for file streaming to enable users to download large files efficiently
+14. Implementing a file preview feature done with AI/ML to generate previews for various file types
 
 ## Conclusion
 
