@@ -35,7 +35,7 @@ While the project provides a functional implementation, there are several areas 
 2. Associating uploaded files with user information for better tracking and management
 3. Implementing distributed locking or caching using Redis to improve performance and handle concurrency
 4. Adding idempotency keys to API requests to prevent duplicate file uploads or modifications
-
+5. Integrating SonarCloud into the GitHub pipeline for code quality analysis and continuous improvement
 ## Conclusion
 
 The File API project serves as a valuable learning experience, showcasing the integration of Kotlin and Spring Boot with

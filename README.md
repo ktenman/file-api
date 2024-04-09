@@ -1,42 +1,106 @@
-# Test assignment: File API
+# File API
 
-For assignment description see the [assignment.md](assignment.md) file.
+The File API is a RESTful service that allows users to upload, retrieve, and manage files. It provides endpoints for
+uploading files with metadata, retrieving file metadata and content, and deleting files.
 
-## Notes
+## Features
 
-There is no Java version of this. As on a daily basis we work with Kotlin projects here, the test-assignment is a short
-introduction into the technologies that we use here.
+- Upload files with associated metadata
+- Retrieve file metadata and content by token
+- Delete files by token
+- Automatically remove expired files based on the expiration time
+- Secure file storage using MinIO object storage
+- Integration with MongoDB for storing file metadata
+- Authentication using Basic Auth
+- API documentation using Swagger
+- Logging and exception handling
+- Integration tests
 
-The aim of the test-assignment is not to only test Your development skills, but to give You an overview of how and what
-we do here.
+## Technologies Used
 
-### Tips
+- Kotlin
+- Spring Boot
+- Spring Data MongoDB
+- Spring Security
+- MinIO
+- Swagger
+- JUnit 5
+- Mockito
+- Testcontainers
 
-Kotlin and Java classes work very well
-together (https://kotlinlang.org/docs/mixing-java-kotlin-intellij.html#adding-kotlin-source-code-to-an-existing-java-project).
+## Getting Started
 
-## Start-up
+### Prerequisites
 
-### Starting the database
+- Docker
+- Docker Compose
+- Java 21
+- Maven v3.9.5
 
-    docker-compose up -d
+### Installation
+
+1. Clone the repository:
+
+```shell
+git clone https://github.com/your-username/file-api.git
+```
+
+2. Navigate to the project directory:
+
+```shell
+cd file-api
+```
+
+3. Build and run the project using Docker Compose:
+
+```shell    
+docker-compose up -f docker-compose.yml
+```
 
 ### Configuration
 
-See `variables.env` file
+The application uses the following configuration properties:
+
+* `spring.data.mongodb.uri`: MongoDB connection URI
+* `minio.url`: MinIO server URL
+* `minio.access-key`: MinIO access key
+* `minio.secret-key`: MinIO secret key
+* `minio.bucket-name`: MinIO bucket name for storing files
+
+You can modify these properties in the application.properties file located in src/main/resources.
+
+### API Documentation
+
+The API documentation is available using Swagger. Once the application is running, you can access the Swagger UI
+at http://localhost:6011/docs or http://localhost:6011/swagger-ui/index.html
+
+### Running Tests
+
+To run the unit and integration tests, use the following command:
+
+```shell
+mvn test
+```
 
 ## Usage
 
-In development add
+### Authentication
 
-    127.0.0.1    filedb
+The File API uses Basic Authentication for securing the endpoints. The default username is `admin` and the password is
+`hunter2`. You can modify the authentication credentials in the `ApiAuthenticationProvider` class.
 
-to your `/etc/hosts` file
+### Endpoints
 
-For basic auth, username is `admin` and password is `hunter2`
+* `POST /files`: Upload a file with metadata
+* `GET /files`: Retrieve file metadata by tokens
+* `GET /files/{token}/content`: Download a file by token
+* `GET /files/{token}/meta`: Retrieve file metadata by token
+* `DELETE /files/{token}`: Delete a file by token
 
-### Start from CLI
+For detailed information about the request and response formats, please refer to the API documentation.
 
-    ./do.sh start
-
-For API documentation go to http://localhost:6011/docs
+---
+This README file provides an overview of the File API project, including its features, technologies used, installation
+instructions, configuration details, API documentation, and usage guidelines. The project aims to provide a simple and
+secure file management service with support for file uploads, retrieval, and guidelines. It also demonstrates the
+integration of various technologies and practices, such as Spring Boot, MongoDB, MinIO, Swagger, and Testcontainers.
