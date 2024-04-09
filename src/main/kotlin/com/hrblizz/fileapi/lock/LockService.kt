@@ -11,6 +11,11 @@ class LockService(
     private val redisTemplate: RedisTemplate<String, String>,
     private val clock: Clock
 ) {
+    companion object {
+        const val LOCK_PREFIX: String = "lock:"
+        private const val DEFAULT_LOCK_WAIT_MILLIS: Long = 5000
+        private const val DEFAULT_LOCK_RETRY_INTERVAL_MILLIS: Long = 30
+    }
 
     fun acquireLock(identifier: String, timeoutMillis: Long) {
         var retryIntervalMillis = DEFAULT_LOCK_RETRY_INTERVAL_MILLIS
@@ -26,8 +31,7 @@ class LockService(
             val next = previous + current
             previous = current
             current = next
-            retryIntervalMillis =
-                calculateRetryInterval(current, retryIntervalMillis, startTime, DEFAULT_LOCK_WAIT_MILLIS)
+            retryIntervalMillis = calculateRetryInterval(current, retryIntervalMillis, startTime)
         }
         throw IllegalStateException("Unable to acquire lock for identifier: $identifier")
     }
@@ -51,22 +55,15 @@ class LockService(
         current: Long,
         retryIntervalMillis: Long,
         startTime: Long,
-        waitMillis: Long
     ): Long {
         return min(
             (current * retryIntervalMillis).toDouble(),
-            (waitMillis - (clock.millis() - startTime)).toDouble()
+            (DEFAULT_LOCK_WAIT_MILLIS - (clock.millis() - startTime)).toDouble()
         ).toLong()
     }
 
     fun releaseLock(identifier: String) {
         val lockKey = LOCK_PREFIX + identifier
         redisTemplate.delete(lockKey)
-    }
-
-    companion object {
-        const val LOCK_PREFIX: String = "lock:"
-        private const val DEFAULT_LOCK_WAIT_MILLIS: Long = 5000
-        private const val DEFAULT_LOCK_RETRY_INTERVAL_MILLIS: Long = 30
     }
 }

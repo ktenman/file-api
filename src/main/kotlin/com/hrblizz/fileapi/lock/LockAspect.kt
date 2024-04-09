@@ -19,7 +19,6 @@ class LockAspect(
     private val parser: ExpressionParser = SpelExpressionParser()
 
     @Around("@annotation(lock)")
-    @Throws(Throwable::class)
     fun aroundLockedMethod(joinPoint: ProceedingJoinPoint, lock: Lock) {
         require(lock.key.isNotBlank()) { "Lock key cannot be empty" }
         val lockKey = getKey(lock.key, joinPoint)
