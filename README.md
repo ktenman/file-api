@@ -16,7 +16,8 @@ uploading files with metadata, retrieving file metadata and content, and deletin
 - Authentication using Basic Auth
 - API documentation using Swagger
 - Logging and exception handling
-- Integration tests
+- Integration and unit tests using JUnit 5 and Mockito
+- Distributed locking using Redis
 
 ## Technologies Used
 
@@ -44,22 +45,19 @@ Before you begin, ensure your system meets the following requirements:
 ### Installation
 
 1. Clone the repository:
-
-```shell
-git clone https://github.com/ktenman/file-api.git
-```
+    ```shell
+    git clone https://github.com/ktenman/file-api.git
+    ```
 
 2. Navigate to the project directory:
-
-```shell
-cd file-api
-```
+    ```shell
+    cd file-api
+    ```
 
 3. Build and run the project using Docker Compose:
-
-```shell    
-docker-compose -f docker-compose.yml up
-```
+    ```shell    
+    docker-compose -f docker-compose.yml up
+    ```
 
 ### Configuration
 
