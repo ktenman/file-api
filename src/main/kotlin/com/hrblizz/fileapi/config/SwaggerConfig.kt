@@ -12,6 +12,12 @@ class SwaggerConfig {
     @Bean
     fun api(): OpenAPI {
         return OpenAPI()
+            .info(
+                io.swagger.v3.oas.models.info.Info()
+                    .title("File API")
+                    .description("API for file management")
+                    .version("1.0")
+            )
             .components(
                 Components()
                     .addSecuritySchemes(
