@@ -42,7 +42,7 @@ class FileController(
     )
     fun uploadFile(
         @Valid @RequestPart("metadata") request: FileUploadMetadata,
-        @RequestParam("file") file: MultipartFile
+        @RequestPart("file") file: MultipartFile
     ): FileUploadResponse {
         val token = fileService.uploadFile(request, file)
         return FileUploadResponse(token)
