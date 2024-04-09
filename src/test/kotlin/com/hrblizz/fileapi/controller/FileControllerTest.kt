@@ -37,9 +37,8 @@ import java.time.Clock
 import java.time.Instant
 import java.util.*
 
-
 @IntegrationTest
-class FileControllerIntegrationTest {
+class FileControllerTest {
 
     @MockBean
     private lateinit var clock: Clock

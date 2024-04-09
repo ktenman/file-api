@@ -20,7 +20,7 @@ import java.time.Clock
 import java.time.Instant
 
 @IntegrationTest
-class FileCleanupJobIntegrationTest {
+class FileCleanupJobTest {
 
     @MockBean
     private lateinit var clock: Clock

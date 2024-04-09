@@ -9,7 +9,7 @@ import org.springframework.core.io.ClassPathResource
 import org.springframework.mock.web.MockMultipartFile
 
 @IntegrationTest
-class StorageServiceIntegrationTest {
+class StorageServiceTest {
     @Resource
     private lateinit var storageService: StorageService
 

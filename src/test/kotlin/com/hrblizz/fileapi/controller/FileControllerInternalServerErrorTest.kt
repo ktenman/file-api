@@ -24,7 +24,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPat
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @IntegrationTest
-class FileControllerInternalServerErrorIntegrationTest {
+class FileControllerInternalServerErrorTest {
 
     @Resource
     private lateinit var mockMvc: MockMvc
