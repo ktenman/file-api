@@ -43,9 +43,6 @@ services:
       context: .
     ports:
       - '6011:6011'
-    dns:
-      - 8.8.8.8  # Google DNS server
-      - 1.1.1.1  # Cloudflare DNS server
     environment:
       - SPRING_DATA_MONGODB_URI=mongodb://mongodb:27017/files
       - MINIO_URL=http://minio:9000

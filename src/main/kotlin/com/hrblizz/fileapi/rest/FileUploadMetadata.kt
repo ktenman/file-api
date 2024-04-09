@@ -36,7 +36,7 @@ data class FileUploadMetadata(
 
     @Schema(
         description = "Expiration time of the file",
-        example = "2022-12-31T23:59:59Z"
+        example = "2028-12-31T23:59:59Z"
     )
     val expireTime: Instant?
 )
