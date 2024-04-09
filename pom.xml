@@ -29,6 +29,8 @@
         <mockito.kotlin.version>5.2.1</mockito.kotlin.version>
         <springdoc-openapi-starter-webmvc-ui.version>2.5.0</springdoc-openapi-starter-webmvc-ui.version>
         <jacoco-maven-plugin.version>0.8.12</jacoco-maven-plugin.version>
+        <sonar.organization>ktenman</sonar.organization>
+        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     </properties>
 
     <dependencies>
