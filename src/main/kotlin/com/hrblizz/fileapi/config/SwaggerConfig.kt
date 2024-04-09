@@ -22,7 +22,8 @@ class SwaggerConfig {
                 Components()
                     .addSecuritySchemes(
                         "basicScheme",
-                        SecurityScheme().type(SecurityScheme.Type.HTTP).scheme("basic")
+                        SecurityScheme().type(SecurityScheme.Type.HTTP)
+                            .scheme("basic")
                     )
             )
             .addSecurityItem(SecurityRequirement().addList("basicScheme"))

@@ -4,7 +4,8 @@ import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 
-data class FileDownloadResponse(val fileData: FileData) : HttpEntity<ByteArray>() {
+data class FileDownloadResponse(val fileData: FileData) :
+    HttpEntity<ByteArray>() {
     companion object {
         private fun createHeaders(fileData: FileData): HttpHeaders {
             val headers = HttpHeaders()

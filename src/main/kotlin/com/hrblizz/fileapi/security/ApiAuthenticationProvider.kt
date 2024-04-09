@@ -14,7 +14,11 @@ class ApiAuthenticationProvider : AuthenticationProvider {
         val password = authentication.credentials.toString()
 
         if (name == "admin" && password == "hunter2") {
-            return UsernamePasswordAuthenticationToken(name, password, emptyList())
+            return UsernamePasswordAuthenticationToken(
+                name,
+                password,
+                emptyList()
+            )
         }
         throw BadCredentialsException("Invalid credentials")
     }

@@ -12,7 +12,9 @@ data class FileMetaResponse(
     companion object {
         operator fun invoke(fileMetadata: List<FileMetadata>): FileMetaResponse {
             return FileMetaResponse(
-                files = fileMetadata.associateBy({ it.token }, { FileMetaDataResponse(it) })
+                files = fileMetadata.associateBy(
+                    { it.token },
+                    { FileMetaDataResponse(it) })
             )
         }
     }
@@ -24,9 +26,17 @@ data class FileMetaDataResponse(
     val contentType: String,
     val meta: Map<String, Any>,
     val source: String,
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'", timezone = "UTC")
+    @JsonFormat(
+        shape = JsonFormat.Shape.STRING,
+        pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'",
+        timezone = "UTC"
+    )
     val createTime: Instant = Instant.now(),
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'", timezone = "UTC")
+    @JsonFormat(
+        shape = JsonFormat.Shape.STRING,
+        pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'",
+        timezone = "UTC"
+    )
     val expireTime: Instant?
 ) {
     companion object {

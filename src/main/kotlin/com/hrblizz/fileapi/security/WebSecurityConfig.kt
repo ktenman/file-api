@@ -16,7 +16,13 @@ class WebSecurityConfig(
 ) {
     companion object {
         private val ALLOWED_PATHS = listOf(
-            "/docs", "/docs/**", "/webjars/**", "/favicon.ico", "/actuator/**", "/v3/api-docs/**", "/swagger-ui/**"
+            "/docs",
+            "/docs/**",
+            "/webjars/**",
+            "/favicon.ico",
+            "/actuator/**",
+            "/v3/api-docs/**",
+            "/swagger-ui/**"
         )
     }
 
@@ -28,7 +34,11 @@ class WebSecurityConfig(
             .csrf { it.disable() }
             .authorizeHttpRequests { authorize ->
                 authorize
-                    .requestMatchers(*ALLOWED_PATHS.map { AntPathRequestMatcher(it) }.toTypedArray())
+                    .requestMatchers(*ALLOWED_PATHS.map {
+                        AntPathRequestMatcher(
+                            it
+                        )
+                    }.toTypedArray())
                     .permitAll()
                     .anyRequest()
                     .fullyAuthenticated()

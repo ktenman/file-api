@@ -20,7 +20,10 @@ class LoggerRequestInterceptor(
         response: HttpServletResponse,
         handler: Any
     ): Boolean {
-        MDC.put(CORRELATION_ID, MDC.get(CORRELATION_ID) ?: java.util.UUID.randomUUID().toString())
+        MDC.put(
+            CORRELATION_ID,
+            MDC.get(CORRELATION_ID) ?: java.util.UUID.randomUUID().toString()
+        )
         request.setAttribute("start_time", System.nanoTime())
         return true
     }

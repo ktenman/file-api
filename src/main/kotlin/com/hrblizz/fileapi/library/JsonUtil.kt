@@ -16,7 +16,8 @@ object JsonUtil {
         .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
         .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
 
-    private val dateFormat: SimpleDateFormat = SimpleDateFormat(DATE_FORMAT_PATTERN, Locale.getDefault())
+    private val dateFormat: SimpleDateFormat =
+        SimpleDateFormat(DATE_FORMAT_PATTERN, Locale.getDefault())
 
     /**
      * Safely writes the input object into a JSON string.
@@ -26,7 +27,11 @@ object JsonUtil {
      * @param formatDates Whether to format dates using the specified date format.
      * @return The JSON string representation of the object, or an empty string if serialization fails.
      */
-    fun toJson(obj: Any, usePrettyWriter: Boolean = false, formatDates: Boolean = false): String {
+    fun toJson(
+        obj: Any,
+        usePrettyWriter: Boolean = false,
+        formatDates: Boolean = false
+    ): String {
         return try {
             val writer = if (usePrettyWriter) {
                 objectMapper.writerWithDefaultPrettyPrinter()

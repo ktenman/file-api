@@ -15,7 +15,8 @@ class WebConfig(
     }
 
     override fun addViewControllers(registry: ViewControllerRegistry) {
-        registry.addViewController("/docs").setViewName("forward:/docs/index.html")
+        registry.addViewController("/docs")
+            .setViewName("forward:/docs/index.html")
     }
 
 }

@@ -23,7 +23,11 @@ class ApiAuthenticationEntryPoint : AuthenticationEntryPoint {
         response.contentType = MediaType.APPLICATION_JSON_VALUE
 
         val responseEntity =
-            ResponseEntity(null, listOf(RestErrorMessage(authEx.message)), UNAUTHORIZED.value())
+            ResponseEntity(
+                null,
+                listOf(RestErrorMessage(authEx.message)),
+                UNAUTHORIZED.value()
+            )
 
         response.writer.use { writer ->
             writer.println(JsonUtil.toJson(responseEntity))

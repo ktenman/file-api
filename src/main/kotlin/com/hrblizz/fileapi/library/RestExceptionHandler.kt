@@ -94,7 +94,9 @@ class RestExceptionHandler(
             is WebExchangeBindException -> exception.bindingResult
             else -> return emptyMap()
         }
-        return bindingResult.fieldErrors.associate { it.field to (it.defaultMessage ?: "Validation error") }
+        return bindingResult.fieldErrors.associate {
+            it.field to (it.defaultMessage ?: "Validation error")
+        }
     }
 
     private fun logException(exception: Exception, message: String) {

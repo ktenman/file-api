@@ -2,7 +2,7 @@ package com.hrblizz.fileapi.library.log
 
 import java.time.LocalDateTime
 
-open class LogItem constructor(
+open class LogItem(
     open val message: String
 ) {
     val dateTime: LocalDateTime = LocalDateTime.now()
