@@ -8,6 +8,7 @@ import com.hrblizz.fileapi.rest.ErrorMessage
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.MethodArgumentNotValidException
+import org.springframework.web.bind.MissingServletRequestParameterException
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.support.WebExchangeBindException
@@ -73,6 +74,20 @@ class RestExceptionHandler(
     fun handleValidationExceptions(exception: Exception): ResponseEntity<ErrorMessage> {
         logException(exception, "Validation exception occurred")
         return handleValidationException(exception)
+    }
+
+    @ExceptionHandler(MissingServletRequestParameterException::class)
+    fun handleMissingRequestParameterException(
+        exception: MissingServletRequestParameterException
+    ): ResponseEntity<ErrorMessage> {
+        logException(exception, "Missing request parameter exception occurred")
+        return ResponseEntity(
+            ErrorMessage(
+                code = "missing_request_parameter",
+                message = "Required request parameter '${exception.parameterName}' is missing."
+            ),
+            HttpStatus.BAD_REQUEST
+        )
     }
 
     @ExceptionHandler(Exception::class)

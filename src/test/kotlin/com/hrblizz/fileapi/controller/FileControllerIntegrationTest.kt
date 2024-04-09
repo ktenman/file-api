@@ -30,7 +30,6 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
@@ -270,7 +269,7 @@ class FileControllerIntegrationTest {
         fun `should return bad request when tokens are missing`() {
             mockMvc.perform(get("/files"))
                 .andExpect(status().isBadRequest)
-                .andExpect(content().string(""))
+                .andExpect(jsonPath("$.message").value("Required request parameter 'tokens' is missing."))
         }
 
         @Test
