@@ -54,7 +54,7 @@ cd file-api
 3. Build and run the project using Docker Compose:
 
 ```shell    
-docker-compose up -f docker-compose.yml
+docker-compose -f docker-compose.yml up
 ```
 
 ### Configuration
