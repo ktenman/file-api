@@ -19,8 +19,8 @@ import org.testcontainers.containers.MongoDBContainer
 @ContextConfiguration(initializers = [IntegrationTest.Initializer::class])
 annotation class IntegrationTest {
     companion object {
-        const val DEFAULT_USERNAME = "admin"
-        const val DEFAULT_PASSWORD = "hunter2"
+        const val USERNAME = "admin"
+        const val PASSWORD = "hunter2"
         const val DEFAULT_ROLE = "USER"
         private const val MONGO_DB_NAME = "files"
         private const val MINIO_ACCESS_KEY = "minioaccess"
@@ -40,7 +40,8 @@ annotation class IntegrationTest {
             .apply { start() }
     }
 
-    class Initializer : ApplicationContextInitializer<ConfigurableApplicationContext> {
+    class Initializer :
+        ApplicationContextInitializer<ConfigurableApplicationContext> {
         override fun initialize(applicationContext: ConfigurableApplicationContext) {
             val minioUrl = "http://$MINIO_HOST:${MINIO_CONTAINER.getMappedPort(9000)}"
             TestPropertyValues.of(
@@ -70,7 +71,9 @@ annotation class IntegrationTest {
             }
         }
 
-        fun createBucketIfNotExists(minioClient: MinioClient, bucketName: String) {
+        fun createBucketIfNotExists(
+            minioClient: MinioClient, bucketName: String
+        ) {
             minioClient.createBucket(bucketName)
         }
     }

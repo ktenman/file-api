@@ -28,7 +28,8 @@ class StorageServiceIntegrationTest {
 
     @Test
     fun `download a non-existent file`() {
-        val thrown = catchThrowable { storageService.downloadFile(invalidFileName) }
+        val thrown =
+            catchThrowable { storageService.downloadFile(invalidFileName) }
 
         assertThat(thrown).isInstanceOf(RuntimeException::class.java)
             .hasMessageContaining("Error downloading file from minio")
@@ -37,9 +38,19 @@ class StorageServiceIntegrationTest {
     @Test
     fun `upload an empty file`() {
         val emptyFileName = "empty-file.txt"
-        val emptyFile = MockMultipartFile(emptyFileName, emptyFileName, "text/plain", ByteArray(0))
+        val emptyFile = MockMultipartFile(
+            emptyFileName,
+            emptyFileName,
+            "text/plain",
+            ByteArray(0)
+        )
 
-        val thrown = catchThrowable { storageService.uploadFile(emptyFile, emptyFileName) }
+        val thrown = catchThrowable {
+            storageService.uploadFile(
+                emptyFile,
+                emptyFileName
+            )
+        }
 
         assertThat(thrown).isInstanceOf(IllegalArgumentException::class.java)
             .hasMessageContaining("Cannot upload an empty file")

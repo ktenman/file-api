@@ -1,9 +1,9 @@
 package com.hrblizz.fileapi.cntroller
 
 import com.hrblizz.fileapi.IntegrationTest
-import com.hrblizz.fileapi.IntegrationTest.Companion.DEFAULT_PASSWORD
 import com.hrblizz.fileapi.IntegrationTest.Companion.DEFAULT_ROLE
-import com.hrblizz.fileapi.IntegrationTest.Companion.DEFAULT_USERNAME
+import com.hrblizz.fileapi.IntegrationTest.Companion.PASSWORD
+import com.hrblizz.fileapi.IntegrationTest.Companion.USERNAME
 import com.hrblizz.fileapi.data.entities.FileMetadata
 import com.hrblizz.fileapi.library.JsonUtil
 import com.hrblizz.fileapi.rest.FileMetaDataResponse
@@ -66,8 +66,9 @@ internal class FileControllerIntegrationTest {
     @DisplayName("POST /files")
     internal inner class PostFiles {
         private val urlTemplate = "/files"
+
         @Test
-        @WithMockUser(username = DEFAULT_USERNAME, password = DEFAULT_PASSWORD, roles = [DEFAULT_ROLE])
+        @WithMockUser(username = USERNAME, password = PASSWORD, roles = [DEFAULT_ROLE])
         fun `should upload file and persist metadata`() {
             val metadata = FileUploadMetadata(
                 name = "test.txt",
@@ -79,7 +80,8 @@ internal class FileControllerIntegrationTest {
             val metadataPart = MockPart("metadata", JsonUtil.toJson(metadata).toByteArray())
             metadataPart.headers.contentType = APPLICATION_JSON
 
-            mockMvc.perform(multipart(urlTemplate).file(file).part(metadataPart)).andExpect(status().isCreated)
+            mockMvc.perform(multipart(urlTemplate).file(file).part(metadataPart))
+                .andExpect(status().isCreated)
 
             val fileMetadataList = mongoTemplate.findAll(FileMetadata::class.java)
             assertThat(fileMetadataList).isNotNull.hasSize(1)
@@ -95,7 +97,7 @@ internal class FileControllerIntegrationTest {
         }
 
         @Test
-        @WithMockUser(username = DEFAULT_USERNAME, password = DEFAULT_PASSWORD, roles = [DEFAULT_ROLE])
+        @WithMockUser(username = USERNAME, password = PASSWORD, roles = [DEFAULT_ROLE])
         fun `should return bad request when name is missing`() {
             val metadata = FileUploadMetadata(
                 name = "",
@@ -113,7 +115,7 @@ internal class FileControllerIntegrationTest {
         }
 
         @Test
-        @WithMockUser(username = DEFAULT_USERNAME, password = DEFAULT_PASSWORD, roles = [DEFAULT_ROLE])
+        @WithMockUser(username = USERNAME, password = PASSWORD, roles = [DEFAULT_ROLE])
         fun `should return bad request when content type is missing`() {
             val metadata = FileUploadMetadata(
                 name = "test.txt",
@@ -131,7 +133,7 @@ internal class FileControllerIntegrationTest {
         }
 
         @Test
-        @WithMockUser(username = DEFAULT_USERNAME, password = DEFAULT_PASSWORD, roles = [DEFAULT_ROLE])
+        @WithMockUser(username = USERNAME, password = PASSWORD, roles = [DEFAULT_ROLE])
         fun `should return bad request when meta is missing`() {
             val metadata = FileUploadMetadata(
                 name = "test.txt",
@@ -149,7 +151,7 @@ internal class FileControllerIntegrationTest {
         }
 
         @Test
-        @WithMockUser(username = DEFAULT_USERNAME, password = DEFAULT_PASSWORD, roles = [DEFAULT_ROLE])
+        @WithMockUser(username = USERNAME, password = PASSWORD, roles = [DEFAULT_ROLE])
         fun `should return bad request when source is missing`() {
             val metadata = FileUploadMetadata(
                 name = "test.txt",
@@ -183,7 +185,7 @@ internal class FileControllerIntegrationTest {
         }
 
         @Test
-        @WithMockUser(username = DEFAULT_USERNAME, password = DEFAULT_PASSWORD, roles = [DEFAULT_ROLE])
+        @WithMockUser(username = USERNAME, password = PASSWORD, roles = [DEFAULT_ROLE])
         fun `should return bad request when file is missing`() {
             val metadata = FileUploadMetadata(
                 name = "test.txt",
@@ -205,7 +207,7 @@ internal class FileControllerIntegrationTest {
     @DisplayName("GET /files?tokens={comma-separated-tokens}")
     inner class GetFilesByMetadata {
         @Test
-        @WithMockUser(username = DEFAULT_USERNAME, password = DEFAULT_PASSWORD, roles = [DEFAULT_ROLE])
+        @WithMockUser(username = USERNAME, password = PASSWORD, roles = [DEFAULT_ROLE])
         fun `should return file metadata for given tokens`() {
             val metadata1 = FileMetadata(
                 token = UUID.randomUUID().toString(),
@@ -251,7 +253,7 @@ internal class FileControllerIntegrationTest {
         }
 
         @Test
-        @WithMockUser(username = DEFAULT_USERNAME, password = DEFAULT_PASSWORD, roles = [DEFAULT_ROLE])
+        @WithMockUser(username = USERNAME, password = PASSWORD, roles = [DEFAULT_ROLE])
         fun `should return empty response when no tokens are provided`() {
             mockMvc.perform(get("/files?tokens="))
                 .andExpect(status().isOk)
@@ -259,7 +261,7 @@ internal class FileControllerIntegrationTest {
         }
 
         @Test
-        @WithMockUser(username = DEFAULT_USERNAME, password = DEFAULT_PASSWORD, roles = [DEFAULT_ROLE])
+        @WithMockUser(username = USERNAME, password = PASSWORD, roles = [DEFAULT_ROLE])
         fun `should return bad request when tokens are missing`() {
             mockMvc.perform(get("/files"))
                 .andExpect(status().isBadRequest)
@@ -278,7 +280,7 @@ internal class FileControllerIntegrationTest {
     @DisplayName("GET /files/{token}/meta")
     inner class GetFileMetadataByToken {
         @Test
-        @WithMockUser(username = DEFAULT_USERNAME, password = DEFAULT_PASSWORD, roles = [DEFAULT_ROLE])
+        @WithMockUser(username = USERNAME, password = PASSWORD, roles = [DEFAULT_ROLE])
         fun `should return file metadata`() {
             val metadata = FileMetadata(
                 token = UUID.randomUUID().toString(),
@@ -299,7 +301,7 @@ internal class FileControllerIntegrationTest {
         }
 
         @Test
-        @WithMockUser(username = DEFAULT_USERNAME, password = DEFAULT_PASSWORD, roles = [DEFAULT_ROLE])
+        @WithMockUser(username = USERNAME, password = PASSWORD, roles = [DEFAULT_ROLE])
         fun `should return not found when file is expired`() {
             val metadata = FileMetadata(
                 token = UUID.randomUUID().toString(),
@@ -316,7 +318,7 @@ internal class FileControllerIntegrationTest {
         }
 
         @Test
-        @WithMockUser(username = DEFAULT_USERNAME, password = DEFAULT_PASSWORD, roles = [DEFAULT_ROLE])
+        @WithMockUser(username = USERNAME, password = PASSWORD, roles = [DEFAULT_ROLE])
         fun `should return not found when file metadata does not exist`() {
             val token = "non-existent-token"
 
@@ -337,7 +339,7 @@ internal class FileControllerIntegrationTest {
     @DisplayName("GET /files/{token}/content")
     inner class GetFileByToken {
         @Test
-        @WithMockUser(username = DEFAULT_USERNAME, password = DEFAULT_PASSWORD, roles = [DEFAULT_ROLE])
+        @WithMockUser(username = USERNAME, password = PASSWORD, roles = [DEFAULT_ROLE])
         fun `should download file with metadata`() {
             val metadata = FileMetadata(
                 token = UUID.randomUUID().toString(),
@@ -363,7 +365,7 @@ internal class FileControllerIntegrationTest {
         }
 
         @Test
-        @WithMockUser(username = DEFAULT_USERNAME, password = DEFAULT_PASSWORD, roles = [DEFAULT_ROLE])
+        @WithMockUser(username = USERNAME, password = PASSWORD, roles = [DEFAULT_ROLE])
         fun `should return not found when file does not exist`() {
             val token = "non-existent-token"
 
@@ -384,7 +386,7 @@ internal class FileControllerIntegrationTest {
     @DisplayName("DELETE /files/{token}")
     inner class DeleteFileByToken {
         @Test
-        @WithMockUser(username = DEFAULT_USERNAME, password = DEFAULT_PASSWORD, roles = [DEFAULT_ROLE])
+        @WithMockUser(username = USERNAME, password = PASSWORD, roles = [DEFAULT_ROLE])
         fun `should delete file and metadata`() {
             val metadata = FileMetadata(
                 token = UUID.randomUUID().toString(),
@@ -407,7 +409,7 @@ internal class FileControllerIntegrationTest {
         }
 
         @Test
-        @WithMockUser(username = DEFAULT_USERNAME, password = DEFAULT_PASSWORD, roles = [DEFAULT_ROLE])
+        @WithMockUser(username = USERNAME, password = PASSWORD, roles = [DEFAULT_ROLE])
         fun `should return not found when file does not exist`() {
             val token = "non-existent-token"
 
