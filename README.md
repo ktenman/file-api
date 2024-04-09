@@ -1,5 +1,7 @@
 # File API
 
+[![Build & Test](https://github.com/ktenman/file-api/actions/workflows/ci.yml/badge.svg)](https://github.com/ktenman/file-api/actions/workflows/ci.yml)
+
 The File API is a RESTful service that allows users to upload, retrieve, and manage files. It provides endpoints for
 uploading files with metadata, retrieving file metadata and content, and deleting files.
 
