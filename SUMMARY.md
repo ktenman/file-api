@@ -25,7 +25,7 @@ Throughout the project, several Kotlin features and concepts were learned and ap
 * Working with iterative functions like `associateBy`, `associate`, `filter`, and `map`
 * Configuring the `@IntegrationTest` annotation using the `apply` method
 * Also other Kotlin features
-  like `lateinit`, `when`, `var`, `val`, `invoke`, `fun`, `companion`, `object`, `data`, `open`, `const`, `?`, `!!`, `init`, `runBlocking`, `reified`, `inline`
+  like `lateinit`, `when`, `require`, `var`, `val`, `invoke`, `fun`, `companion`, `object`, `data`, `open`, `const`, `?`, `!!`, `init`, `runBlocking`, `reified`, `inline`
 * Interacting with MinIO using the MinioClient library
 * Defining multipart requests with JSON metadata in the API documentation using Swagger annotations
 * Learned how to use validation annotations like `@NotBlank` as `@field:NotEmpty` in Kotlin

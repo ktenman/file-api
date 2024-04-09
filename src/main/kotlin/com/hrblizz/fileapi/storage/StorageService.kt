@@ -39,10 +39,7 @@ class StorageService(
             )
         } catch (e: MinioException) {
             logger.critical("Error uploading file: $fileName")
-            throw RuntimeException(
-                "Error uploading file to minio: $fileName",
-                e
-            )
+            throw RuntimeException("Error uploading file to minio: $fileName", e)
         } catch (e: IOException) {
             logger.critical("Error reading file: ${e.message}")
             throw RuntimeException("Error reading file", e)
@@ -61,10 +58,7 @@ class StorageService(
             return response.readAllBytes()
         } catch (e: MinioException) {
             logger.error("Error downloading file: $fileName")
-            throw RuntimeException(
-                "Error downloading file from minio: $fileName",
-                e
-            )
+            throw RuntimeException("Error downloading file from minio: $fileName", e)
         } catch (e: IOException) {
             logger.error("Error reading file: ${e.message}")
             throw RuntimeException("Error reading file", e)
@@ -82,9 +76,7 @@ class StorageService(
             )
         } catch (e: MinioException) {
             logger.error("Error deleting file: $fileName")
-            throw RuntimeException(
-                "Error deleting file from minio: $fileName", e
-            )
+            throw RuntimeException("Error deleting file from minio: $fileName", e)
         }
     }
 }
