@@ -42,7 +42,7 @@ uploading files with metadata, retrieving file metadata and content, and deletin
 1. Clone the repository:
 
 ```shell
-git clone https://github.com/your-username/file-api.git
+git clone https://github.com/ktenman/file-api.git
 ```
 
 2. Navigate to the project directory:
