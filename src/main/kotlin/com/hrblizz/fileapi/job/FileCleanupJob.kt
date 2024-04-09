@@ -14,7 +14,7 @@ class FileCleanupJob(
     private val logger: Logger,
     private val clock: Clock
 ) {
-    @Scheduled(cron = "0 * * * * *") // Run every day at midnight
+    @Scheduled(cron = "0 0 0 * * *") // Run every day at midnight
     @Lock(key = "'file-cleanup-job'", retry = false)
     fun cleanupExpiredFiles() {
         logger.info("Running file cleanup job")
