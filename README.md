@@ -1,15 +1,15 @@
 # File API
 
 [![Build & Test](https://github.com/ktenman/file-api/actions/workflows/ci.yml/badge.svg)](https://github.com/ktenman/file-api/actions/workflows/ci.yml)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=ktenman_file-api&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=ktenman_file-api)
-[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=ktenman_file-api&metric=reliability_rating)](https://sonarcloud.io/summary/new_code?id=ktenman_file-api)
-[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=ktenman_file-api&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=ktenman_file-api)
-[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=ktenman_file-api&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=ktenman_file-api)
-[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=ktenman_file-api&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=ktenman_file-api)
-[![Technical Debt](https://sonarcloud.io/api/project_badges/measure?project=ktenman_file-api&metric=sqale_index)](https://sonarcloud.io/summary/new_code?id=ktenman_file-api)
-[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=ktenman_file-api&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=ktenman_file-api)
-[![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=ktenman_file-api&metric=duplicated_lines_density)](https://sonarcloud.io/summary/new_code?id=ktenman_file-api)
-[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=ktenman_file-api&metric=coverage)](https://sonarcloud.io/summary/new_code?id=ktenman_file-api)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=ktenman_file-api&metric=alert_status)](https://sonarcloud.io/summary/overall?id=ktenman_file-api)
+[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=ktenman_file-api&metric=reliability_rating)](https://sonarcloud.io/summary/overall?id=ktenman_file-api)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=ktenman_file-api&metric=security_rating)](https://sonarcloud.io/project/security_hotspots?id=ktenman_file-api)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=ktenman_file-api&metric=sqale_rating)](https://sonarcloud.io/project/issues?resolved=false&id=ktenman_file-api)
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=ktenman_file-api&metric=code_smells)](https://sonarcloud.io/code?id=ktenman_file-api)
+[![Technical Debt](https://sonarcloud.io/api/project_badges/measure?project=ktenman_file-api&metric=sqale_index)](https://sonarcloud.io/summary/overall?id=ktenman_file-api)
+[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=ktenman_file-api&metric=vulnerabilities)](https://sonarcloud.io/code?id=ktenman_file-api)
+[![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=ktenman_file-api&metric=duplicated_lines_density)](https://sonarcloud.io/summary/overall?id=ktenman_file-api)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=ktenman_file-api&metric=coverage)](https://sonarcloud.io/summary/overall?id=ktenman_file-api)
 
 The File API is a RESTful service that allows users to upload, retrieve, and manage files. It provides endpoints for
 uploading files with metadata, retrieving file metadata and content, and deleting files.
