@@ -34,20 +34,27 @@ Throughout the project, several Kotlin features and concepts were learned and ap
 
 While the project provides a functional implementation, there are several areas that could be enhanced:
 
-1. Migrating the authentication mechanism to use **JWT** tokens instead of basic authentication
-2. Associating uploaded files with user information for better tracking and management
-3. Adding **idempotency keys** to API requests to prevent duplicate file uploads or modifications
-4. The exception handling could be improved in the StorageService class to provide more informative error messages
-5. The **Pagenation** and **Sorting** could be implemented in the FileService class to handle large datasets
-6. Implementing a rate-limiting mechanism to prevent abuse and ensure fair usage of the API
-7. Enhancing the API documentation with more detailed descriptions, examples, and error responses
-8. Implementing a file versioning system to track changes and allow users to revert to previous versions
-9. Adding support for file search and filtering based on metadata fields
-10. Implementing a file sharing feature to allow users to share files with others securely
-11. Adding support for file encryption and decryption to enhance security and privacy
-12. Implementing a file compression feature to reduce storage space and improve transfer speeds
-13. Adding support for file streaming to enable users to download large files efficiently
-14. Implementing a file preview feature done with AI/ML to generate previews for various file types
+1. **Implement JWT Authentication:** Migrate the authentication mechanism from basic authentication to JWT tokens for
+   enhanced security and better user management.
+2. **Improve API Design:** Refactor the API endpoints to better align with REST best practices, ensuring clear and
+   consistent naming conventions, proper HTTP methods, and meaningful status codes.
+3. **Enhance Exception Handling:** Improve the exception handling in the `StorageService` class to provide more
+   informative error messages and ensure appropriate HTTP status codes are returned for different error scenarios.
+4. **Add Pagination and Sorting:** Implement pagination and sorting functionality in the `FileService` class to handle
+   large datasets efficiently and provide a better user experience when retrieving file metadata.
+5. **Implement Rate Limiting:** Add a rate-limiting mechanism to prevent abuse and ensure fair usage of the API,
+   protecting against excessive requests from a single client.
+6. **Enhance API Documentation:** Improve the API documentation by providing more detailed descriptions, examples, and
+   error responses using Swagger annotations, making it easier for developers to understand and integrate with the API.
+7. **Associate Files with Users:** Modify the file upload process to associate uploaded files with user information,
+   allowing for better tracking, management, and access control based on user roles and permissions.
+8. **Implement Idempotency Keys:** Add support for idempotency keys in API requests to prevent duplicate file uploads or
+   modifications, ensuring data consistency and reliability.
+9. **Add File Search and Filtering:** Implement file search and filtering functionality based on metadata fields,
+   allowing users to easily find and retrieve specific files based on their attributes.
+10. **Improve Code Structure and Formatting:** Refactor the codebase to improve clarity, maintainability, and adherence
+    to coding standards. This includes consistent naming conventions, proper indentation, and clear separation of
+    concerns.
 
 ## Conclusion
 
