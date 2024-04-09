@@ -1,6 +1,6 @@
 package com.hrblizz.fileapi.library.log
 
-import com.hrblizz.fileapi.library.CORRELATION_ID
+import com.hrblizz.fileapi.library.LoggerRequestInterceptor.Companion.CORRELATION_ID
 import org.slf4j.MDC
 import org.springframework.stereotype.Component
 

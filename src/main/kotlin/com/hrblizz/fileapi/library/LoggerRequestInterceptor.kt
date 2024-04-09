@@ -8,8 +8,6 @@ import org.slf4j.MDC
 import org.springframework.stereotype.Component
 import org.springframework.web.servlet.HandlerInterceptor
 
-const val CORRELATION_ID = "correlationId"
-
 @Component
 class LoggerRequestInterceptor(
     private val logger: Logger
@@ -48,5 +46,9 @@ class LoggerRequestInterceptor(
     fun durationInMillis(startTime: Long): Long {
         val duration = (System.nanoTime() - startTime) / 1000000.0
         return duration.toLong()
+    }
+
+    companion object {
+        const val CORRELATION_ID = "correlation_id"
     }
 }
