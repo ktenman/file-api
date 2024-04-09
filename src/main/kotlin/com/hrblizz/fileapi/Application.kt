@@ -6,8 +6,8 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 
 @SpringBootApplication
 @EnableMongoRepositories(basePackages = ["com.hrblizz.fileapi.data.repository"])
-class Application {
-    fun main(args: Array<String>) {
-        runApplication<Application>(*args)
-    }
+class Application
+
+fun main(args: Array<String>) {
+    runApplication<Application>(*args)
 }
