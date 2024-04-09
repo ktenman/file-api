@@ -18,38 +18,39 @@ data class FileMetaResponse(
             )
         }
     }
-}
 
-data class FileMetaDataResponse(
-    val token: String = UUID.randomUUID().toString(),
-    val name: String,
-    val contentType: String,
-    val meta: Map<String, Any>,
-    val source: String,
-    @JsonFormat(
-        shape = JsonFormat.Shape.STRING,
-        pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'",
-        timezone = "UTC"
-    )
-    val createTime: Instant = Instant.now(),
-    @JsonFormat(
-        shape = JsonFormat.Shape.STRING,
-        pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'",
-        timezone = "UTC"
-    )
-    val expireTime: Instant?
-) {
-    companion object {
-        operator fun invoke(fileMetadata: FileMetadata): FileMetaDataResponse {
-            return FileMetaDataResponse(
-                token = fileMetadata.token,
-                name = fileMetadata.name,
-                contentType = fileMetadata.contentType,
-                meta = JsonUtil.fromJson(fileMetadata.meta),
-                source = fileMetadata.source,
-                createTime = fileMetadata.createTime,
-                expireTime = fileMetadata.expireTime
-            )
+    data class FileMetaDataResponse(
+        val token: String = UUID.randomUUID().toString(),
+        val name: String,
+        val contentType: String,
+        val meta: Map<String, Any>,
+        val source: String,
+        @JsonFormat(
+            shape = JsonFormat.Shape.STRING,
+            pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'",
+            timezone = "UTC"
+        )
+        val createTime: Instant = Instant.now(),
+        @JsonFormat(
+            shape = JsonFormat.Shape.STRING,
+            pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'",
+            timezone = "UTC"
+        )
+        val expireTime: Instant?
+    ) {
+        companion object {
+            operator fun invoke(fileMetadata: FileMetadata): FileMetaDataResponse {
+                return FileMetaDataResponse(
+                    token = fileMetadata.token,
+                    name = fileMetadata.name,
+                    contentType = fileMetadata.contentType,
+                    meta = JsonUtil.fromJson(fileMetadata.meta),
+                    source = fileMetadata.source,
+                    createTime = fileMetadata.createTime,
+                    expireTime = fileMetadata.expireTime
+                )
+            }
         }
     }
+
 }

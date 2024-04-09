@@ -9,8 +9,10 @@ import org.springframework.boot.test.util.TestPropertyValues
 import org.springframework.context.ApplicationContextInitializer
 import org.springframework.context.ConfigurableApplicationContext
 import org.springframework.test.context.ContextConfiguration
+import org.testcontainers.containers.GenericContainer
 import org.testcontainers.containers.MinIOContainer
 import org.testcontainers.containers.MongoDBContainer
+import org.testcontainers.utility.DockerImageName
 
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.RUNTIME)
@@ -27,6 +29,7 @@ annotation class IntegrationTest {
         private const val MINIO_SECRET_KEY = "miniosecret"
         private const val BUCKET_NAME = "test-bucket"
         private const val MINIO_HOST = "127.0.0.1"
+        private const val CUSTOM_PASSWORD = "something"
 
         private val MONGO_DB_CONTAINER = MongoDBContainer("mongo:latest")
             .withExposedPorts(27017)
@@ -38,6 +41,12 @@ annotation class IntegrationTest {
             .withPassword(MINIO_SECRET_KEY)
             .withNetworkAliases(MINIO_HOST)
             .apply { start() }
+
+        private val REDIS_CONTAINER: GenericContainer<*> =
+            GenericContainer(DockerImageName.parse("redis:7.2-alpine"))
+                .withExposedPorts(6379)
+                .withCommand("redis-server", "--requirepass", CUSTOM_PASSWORD)
+                .apply { start() }
     }
 
     class Initializer :
@@ -49,7 +58,10 @@ annotation class IntegrationTest {
                 "minio.url=$minioUrl",
                 "minio.access-key=$MINIO_ACCESS_KEY",
                 "minio.secret-key=$MINIO_SECRET_KEY",
-                "minio.bucket-name=$BUCKET_NAME"
+                "minio.bucket-name=$BUCKET_NAME",
+                "spring.data.redis.host=${REDIS_CONTAINER.host}",
+                "spring.data.redis.port=${REDIS_CONTAINER.firstMappedPort}",
+                "spring.data.redis.password=$CUSTOM_PASSWORD",
             ).applyTo(applicationContext.environment)
 
             val minioClient = MinioClient.builder()

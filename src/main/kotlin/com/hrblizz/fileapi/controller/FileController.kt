@@ -1,8 +1,8 @@
 package com.hrblizz.fileapi.controller
 
 import com.hrblizz.fileapi.rest.FileDownloadResponse
-import com.hrblizz.fileapi.rest.FileMetaDataResponse
 import com.hrblizz.fileapi.rest.FileMetaResponse
+import com.hrblizz.fileapi.rest.FileMetaResponse.FileMetaDataResponse
 import com.hrblizz.fileapi.rest.FileUploadMetadata
 import com.hrblizz.fileapi.rest.FileUploadResponse
 import com.hrblizz.fileapi.service.FileService

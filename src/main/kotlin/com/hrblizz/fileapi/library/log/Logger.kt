@@ -14,6 +14,14 @@ class Logger {
         info(LogItem(string))
     }
 
+    fun debug(logItem: LogItem) {
+        write("debug", logItem)
+    }
+
+    fun debug(string: String) {
+        debug(LogItem(string))
+    }
+
     fun error(logItem: LogItem) {
         write("error", logItem)
     }

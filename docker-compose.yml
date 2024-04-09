@@ -38,6 +38,18 @@ services:
     entrypoint: [ ]
     command: /bin/sh /create-bucket.sh
 
+  redis:
+    image: redis:7.2-alpine
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping", "-a", "something" ]
+      interval: 3s
+      timeout: 1s
+      retries: 5
+    ports:
+      - 127.0.0.1:6379:6379
+
   app:
     build:
       context: .
@@ -52,7 +64,9 @@ services:
     depends_on:
       - mongodb
       - minio
+      - redis
 
 volumes:
   mongodb_data:
   minio_files:
+  redis_data:

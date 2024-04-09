@@ -1,20 +1,11 @@
 package com.hrblizz.fileapi.library
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.SerializationFeature
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import com.fasterxml.jackson.module.kotlin.registerKotlinModule
+import com.hrblizz.fileapi.config.ObjectMapperConfig.Companion.OBJECT_MAPPER
 import java.text.SimpleDateFormat
 import java.util.*
 
 object JsonUtil {
     private const val DATE_FORMAT_PATTERN = "yyyy-MM-dd HH:mm a z"
-
-    private val objectMapper: ObjectMapper = ObjectMapper()
-        .registerModule(JavaTimeModule())
-        .registerKotlinModule()
-        .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-        .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
 
     private val dateFormat: SimpleDateFormat =
         SimpleDateFormat(DATE_FORMAT_PATTERN, Locale.getDefault())
@@ -34,13 +25,13 @@ object JsonUtil {
     ): String {
         return try {
             val writer = if (usePrettyWriter) {
-                objectMapper.writerWithDefaultPrettyPrinter()
+                OBJECT_MAPPER.writerWithDefaultPrettyPrinter()
             } else {
-                objectMapper.writer()
+                OBJECT_MAPPER.writer()
             }
 
             if (formatDates) {
-                objectMapper.dateFormat = dateFormat
+                OBJECT_MAPPER.dateFormat = dateFormat
             }
 
             writer.writeValueAsString(obj)
@@ -59,7 +50,7 @@ object JsonUtil {
      */
     fun <T> fromJson(json: String, clazz: Class<T>): T {
         return try {
-            objectMapper.readValue(json, clazz)
+            OBJECT_MAPPER.readValue(json, clazz)
         } catch (e: Exception) {
             // Return null if deserialization fails
             throw e

@@ -20,11 +20,10 @@ class FileService(
 ) {
 
     fun uploadFile(metadata: FileUploadMetadata, file: MultipartFile): String {
-        val metaJson = JsonUtil.toJson(metadata.meta)
         val fileMetadata = FileMetadata(
             name = metadata.name,
             contentType = metadata.contentType,
-            meta = metaJson,
+            meta = JsonUtil.toJson(metadata.meta),
             source = metadata.source,
             expireTime = metadata.expireTime
         )
