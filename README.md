@@ -34,10 +34,12 @@ uploading files with metadata, retrieving file metadata and content, and deletin
 
 ### Prerequisites
 
-- Docker
-- Docker Compose
-- Java 21
-- Maven v3.9.5
+Before you begin, ensure your system meets the following requirements:
+
+* Java: v21.0.2
+* Maven: v3.9.5
+* Docker: v25.0.3
+* Docker Compose: v2.24.6
 
 ### Installation
 
