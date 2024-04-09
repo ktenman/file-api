@@ -4,10 +4,9 @@ import com.hrblizz.fileapi.data.entities.FileMetadata
 import org.bson.types.ObjectId
 import org.springframework.data.mongodb.repository.MongoRepository
 import java.time.Instant
-import java.util.*
 
 interface FileMetadataRepository : MongoRepository<FileMetadata, ObjectId> {
-    fun findByToken(token: String): Optional<FileMetadata>
+    fun findByToken(token: String): FileMetadata?
     fun findByExpireTimeBefore(expirationTime: Instant): List<FileMetadata>
     fun findAllByTokenInAndExpireTimeGreaterThanOrExpireTimeIsNull(
         tokens: List<String>,
