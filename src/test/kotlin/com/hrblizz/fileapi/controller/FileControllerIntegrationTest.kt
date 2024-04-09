@@ -53,8 +53,13 @@ class FileControllerIntegrationTest {
 
     @Resource
     private lateinit var storageService: StorageService
-    val file = MockMultipartFile("file", "test.txt", "text/plain", "Test content".toByteArray())
 
+    private val testFile = MockMultipartFile(
+        "file",
+        "test.txt",
+        "text/plain",
+        "Test content".toByteArray()
+    )
     @BeforeEach
     fun setUp() {
         whenever(clock.instant()).thenReturn(Instant.parse("2025-01-01T00:00:00Z"))
@@ -80,7 +85,7 @@ class FileControllerIntegrationTest {
             val metadataPart = MockPart("metadata", JsonUtil.toJson(metadata).toByteArray())
             metadataPart.headers.contentType = APPLICATION_JSON
 
-            mockMvc.perform(multipart(urlTemplate).file(file).part(metadataPart))
+            mockMvc.perform(multipart(urlTemplate).file(testFile).part(metadataPart))
                 .andExpect(status().isCreated)
 
             val fileMetadataList = mongoTemplate.findAll(FileMetadata::class.java)
@@ -109,7 +114,7 @@ class FileControllerIntegrationTest {
             val metadataPart = MockPart("metadata", JsonUtil.toJson(metadata).toByteArray())
             metadataPart.headers.contentType = APPLICATION_JSON
 
-            mockMvc.perform(multipart(urlTemplate).file(file).part(metadataPart))
+            mockMvc.perform(multipart(urlTemplate).file(testFile).part(metadataPart))
                 .andExpect(status().isBadRequest)
                 .andExpect(jsonPath("$.errors[0]").value("Name is required"))
         }
@@ -127,7 +132,7 @@ class FileControllerIntegrationTest {
             val metadataPart = MockPart("metadata", JsonUtil.toJson(metadata).toByteArray())
             metadataPart.headers.contentType = APPLICATION_JSON
 
-            mockMvc.perform(multipart(urlTemplate).file(file).part(metadataPart))
+            mockMvc.perform(multipart(urlTemplate).file(testFile).part(metadataPart))
                 .andExpect(status().isBadRequest)
                 .andExpect(jsonPath("$.errors[0]").value("Content type is required"))
         }
@@ -145,7 +150,7 @@ class FileControllerIntegrationTest {
             val metadataPart = MockPart("metadata", JsonUtil.toJson(metadata).toByteArray())
             metadataPart.headers.contentType = APPLICATION_JSON
 
-            mockMvc.perform(multipart(urlTemplate).file(file).part(metadataPart))
+            mockMvc.perform(multipart(urlTemplate).file(testFile).part(metadataPart))
                 .andExpect(status().isBadRequest)
                 .andExpect(jsonPath("$.errors[0]").value("Metadata is required"))
         }
@@ -163,7 +168,7 @@ class FileControllerIntegrationTest {
             val metadataPart = MockPart("metadata", JsonUtil.toJson(metadata).toByteArray())
             metadataPart.headers.contentType = APPLICATION_JSON
 
-            mockMvc.perform(multipart(urlTemplate).file(file).part(metadataPart))
+            mockMvc.perform(multipart(urlTemplate).file(testFile).part(metadataPart))
                 .andExpect(status().isBadRequest)
                 .andExpect(jsonPath("$.errors[0]").value("Source is required"))
         }
@@ -180,7 +185,7 @@ class FileControllerIntegrationTest {
             val metadataPart = MockPart("metadata", JsonUtil.toJson(metadata).toByteArray())
             metadataPart.headers.contentType = APPLICATION_JSON
 
-            mockMvc.perform(multipart("/files").file(file).part(metadataPart))
+            mockMvc.perform(multipart("/files").file(testFile).part(metadataPart))
                 .andExpect(status().isUnauthorized)
         }
 
@@ -350,12 +355,12 @@ class FileControllerIntegrationTest {
                 expireTime = null
             )
             mongoTemplate.save(metadata)
-            storageService.uploadFile(file, metadata.token)
+            storageService.uploadFile(testFile, metadata.token)
 
             val result = mockMvc.perform(get("/files/${metadata.token}/content"))
                 .andExpect(status().isOk)
                 .andExpect(header().string("X-Filename", "test.txt"))
-                .andExpect(header().string("X-Filesize", file.size.toString()))
+                .andExpect(header().string("X-Filesize", testFile.size.toString()))
                 .andExpect(header().exists("X-CreateTime"))
                 .andExpect(header().string("Content-Type", MediaType.TEXT_PLAIN_VALUE))
                 .andReturn()
@@ -397,7 +402,7 @@ class FileControllerIntegrationTest {
                 expireTime = null
             )
             mongoTemplate.save(metadata)
-            storageService.uploadFile(file, metadata.token)
+            storageService.uploadFile(testFile, metadata.token)
 
             mockMvc.perform(delete("/files/${metadata.token}"))
                 .andExpect(status().isNoContent)
