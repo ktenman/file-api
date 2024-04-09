@@ -30,6 +30,7 @@ uploading files with metadata, retrieving file metadata and content, and deletin
 - JUnit 5
 - Mockito
 - Testcontainers
+- Redis
 
 ## Getting Started
 
