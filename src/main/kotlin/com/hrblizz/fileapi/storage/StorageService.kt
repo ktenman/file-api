@@ -13,16 +13,10 @@ import java.io.IOException
 
 @Service
 class StorageService(
-    @Value("\${minio.url}") private val minioUrl: String,
-    @Value("\${minio.access-key}") private val accessKey: String,
-    @Value("\${minio.secret-key}") private val secretKey: String,
     @Value("\${minio.bucket-name}") private val bucketName: String,
+    private val minioClient: MinioClient,
     private val logger: Logger
 ) {
-    val minioClient: MinioClient = MinioClient.builder()
-        .endpoint(minioUrl)
-        .credentials(accessKey, secretKey)
-        .build()
 
     fun uploadFile(file: MultipartFile, fileName: String) {
         logger.info("Uploading file: $fileName")
