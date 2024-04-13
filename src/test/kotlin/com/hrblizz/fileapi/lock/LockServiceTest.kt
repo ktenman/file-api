@@ -91,4 +91,5 @@ class LockServiceTest {
         verify(valueOperations, times(4)).setIfAbsent(anyString(), anyString(), anyLong(), any())
         verify(clock, times(8)).millis()
     }
+
 }

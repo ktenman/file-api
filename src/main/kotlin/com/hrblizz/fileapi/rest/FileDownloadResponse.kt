@@ -4,19 +4,12 @@ import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 
-data class FileDownloadResponse(val fileData: FileData) :
-    HttpEntity<ByteArray>() {
-    companion object {
-        private fun createHeaders(fileData: FileData): HttpHeaders {
-            val headers = HttpHeaders()
-            headers["X-Filename"] = fileData.name
-            headers["X-Filesize"] = fileData.size.toString()
-            headers["X-CreateTime"] = fileData.createTime.toString()
-            headers.contentType = MediaType.parseMediaType(fileData.contentType)
-            return headers
-        }
+data class FileDownloadResponse(val fileData: FileData) : HttpEntity<ByteArray>(
+    fileData.content,
+    HttpHeaders().apply {
+        this["X-Filename"] = fileData.name
+        this["X-Filesize"] = fileData.size.toString()
+        this["X-CreateTime"] = fileData.createTime.toString()
+        contentType = MediaType.parseMediaType(fileData.contentType)
     }
-
-    override fun getHeaders(): HttpHeaders = createHeaders(fileData)
-    override fun getBody(): ByteArray = fileData.content
-}
+)
