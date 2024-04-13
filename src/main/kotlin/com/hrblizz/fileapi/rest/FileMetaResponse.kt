@@ -6,14 +6,9 @@ import com.hrblizz.fileapi.library.JsonUtil
 import java.time.Instant
 import java.util.*
 
-data class FileMetaResponse(
-    val files: Map<String, FileMetaDataResponse>
-) {
+data class FileMetaResponse(val files: Map<String, FileMetaDataResponse>) {
     constructor(fileMetadata: List<FileMetadata>) : this(
-        files = fileMetadata.associateBy(
-            { it.token },
-            { FileMetaDataResponse(it) }
-        )
+        files = fileMetadata.associate { it.token to FileMetaDataResponse(it) }
     )
 
     data class FileMetaDataResponse(

@@ -7,21 +7,15 @@ import jakarta.servlet.http.HttpServletResponse
 import org.slf4j.MDC
 import org.springframework.stereotype.Component
 import org.springframework.web.servlet.HandlerInterceptor
+import java.util.*
 
 @Component
 class LoggerRequestInterceptor(
     private val logger: Logger
 ) : HandlerInterceptor {
 
-    override fun preHandle(
-        request: HttpServletRequest,
-        response: HttpServletResponse,
-        handler: Any
-    ): Boolean {
-        MDC.put(
-            CORRELATION_ID,
-            MDC.get(CORRELATION_ID) ?: java.util.UUID.randomUUID().toString()
-        )
+    override fun preHandle(request: HttpServletRequest, response: HttpServletResponse, handler: Any): Boolean {
+        MDC.put(CORRELATION_ID, MDC.get(CORRELATION_ID) ?: UUID.randomUUID().toString())
         request.setAttribute("start_time", System.nanoTime())
         return true
     }

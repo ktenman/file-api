@@ -34,9 +34,7 @@ class FileService(
 
     fun getFilesByMetadata(tokens: List<String>): List<FileMetadata> {
         val now = Instant.now(clock)
-        return fileMetadataRepository.findAllByTokenInAndExpireTimeGreaterThanOrExpireTimeIsNull(
-            tokens, now
-        )
+        return fileMetadataRepository.findAllByTokenInAndExpireTimeGreaterThanOrExpireTimeIsNull(tokens, now)
     }
 
     fun downloadFile(token: String): FileData {
@@ -60,8 +58,9 @@ class FileService(
 
     fun getFileMetadata(token: String): FileMetadata {
         val now = Instant.now(clock)
-        return fileMetadataRepository.findByToken(token)?.takeIf { it.isNotExpired(now) }
-            ?: throw NotFoundException("File not found with token: $token")
+        return fileMetadataRepository.findByToken(token)?.let {
+            if (it.isNotExpired(now)) it else throw NotFoundException("File not found with token: $token")
+        } ?: throw NotFoundException("File not found with token: $token")
     }
 
     fun removeExpiredFiles(currentTime: Instant) {
