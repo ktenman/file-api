@@ -46,8 +46,7 @@ class FileController(private val fileService: FileService) {
     fun downloadFile(@PathVariable token: String) = FileDownloadResponse(fileService.downloadFile(token))
 
     @GetMapping("/{token}/meta")
-    fun getFileMetadata(@PathVariable token: String) =
-        FileMetaDataResponse(fileService.getFileMetadata(token))
+    fun getFileMetadata(@PathVariable token: String) = FileMetaDataResponse(fileService.getFileMetadata(token))
 
     @DeleteMapping("/{token}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
