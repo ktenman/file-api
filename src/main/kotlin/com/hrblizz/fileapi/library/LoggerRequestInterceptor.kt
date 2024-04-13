@@ -24,7 +24,7 @@ class LoggerRequestInterceptor(
         request: HttpServletRequest,
         response: HttpServletResponse,
         handler: Any,
-        ex: Exception?
+        exception: Exception?
     ) {
         val logItem = TraceLogItem(
             request.method,

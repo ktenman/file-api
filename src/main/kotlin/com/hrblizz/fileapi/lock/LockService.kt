@@ -2,6 +2,7 @@ package com.hrblizz.fileapi.lock
 
 import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.stereotype.Service
+import java.lang.Boolean.TRUE
 import java.time.Clock
 import java.util.concurrent.TimeUnit
 import kotlin.math.min
@@ -38,7 +39,7 @@ class LockService(
 
     fun tryAcquireLock(identifier: String, timeoutMillis: Long): Boolean {
         val lockKey = LOCK_PREFIX + identifier
-        return java.lang.Boolean.TRUE == redisTemplate.opsForValue()
+        return TRUE == redisTemplate.opsForValue()
             .setIfAbsent(lockKey, "locked", timeoutMillis, TimeUnit.MILLISECONDS)
     }
 
