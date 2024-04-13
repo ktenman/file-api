@@ -9,15 +9,12 @@ import java.util.*
 data class FileMetaResponse(
     val files: Map<String, FileMetaDataResponse>
 ) {
-    companion object {
-        operator fun invoke(fileMetadata: List<FileMetadata>): FileMetaResponse {
-            return FileMetaResponse(
-                files = fileMetadata.associateBy(
-                    { it.token },
-                    { FileMetaDataResponse(it) })
-            )
-        }
-    }
+    constructor(fileMetadata: List<FileMetadata>) : this(
+        files = fileMetadata.associateBy(
+            { it.token },
+            { FileMetaDataResponse(it) }
+        )
+    )
 
     data class FileMetaDataResponse(
         val token: String = UUID.randomUUID().toString(),
@@ -38,19 +35,15 @@ data class FileMetaResponse(
         )
         val expireTime: Instant?
     ) {
-        companion object {
-            operator fun invoke(fileMetadata: FileMetadata): FileMetaDataResponse {
-                return FileMetaDataResponse(
-                    token = fileMetadata.token,
-                    name = fileMetadata.name,
-                    contentType = fileMetadata.contentType,
-                    meta = JsonUtil.fromJson(fileMetadata.meta),
-                    source = fileMetadata.source,
-                    createTime = fileMetadata.createTime,
-                    expireTime = fileMetadata.expireTime
-                )
-            }
-        }
+        constructor(fileMetadata: FileMetadata) : this(
+            token = fileMetadata.token,
+            name = fileMetadata.name,
+            contentType = fileMetadata.contentType,
+            meta = JsonUtil.fromJson(fileMetadata.meta),
+            source = fileMetadata.source,
+            createTime = fileMetadata.createTime,
+            expireTime = fileMetadata.expireTime
+        )
     }
 
 }
