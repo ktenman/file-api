@@ -33,29 +33,23 @@ class FileController(private val fileService: FileService) {
             encoding = [Encoding(contentType = MediaType.APPLICATION_JSON_VALUE, name = "metadata")]
         )]
     )
-    fun uploadFile(
-        @Valid @RequestPart metadata: FileUploadMetadata,
-        @RequestPart file: MultipartFile
-    ): FileUploadResponse = FileUploadResponse(fileService.uploadFile(metadata, file))
+    fun uploadFile(@Valid @RequestPart metadata: FileUploadMetadata, @RequestPart file: MultipartFile) =
+        FileUploadResponse(fileService.uploadFile(metadata, file))
 
     @GetMapping
-    fun getFilesByMetadata(@RequestParam tokens: Array<String>): FileMetaResponse =
-        tokens.toList().let {
-            if (it.isEmpty()) FileMetaResponse(emptyList())
-            else FileMetaResponse(fileService.getFilesByMetadata(it))
-        }
+    fun getFilesByMetadata(@RequestParam tokens: Array<String>) = tokens.toList().let {
+        if (it.isEmpty()) FileMetaResponse(emptyList())
+        else FileMetaResponse(fileService.getFilesByMetadata(it))
+    }
 
     @GetMapping("/{token}/content")
-    fun downloadFile(@PathVariable token: String): FileDownloadResponse =
-        FileDownloadResponse(fileService.downloadFile(token))
+    fun downloadFile(@PathVariable token: String) = FileDownloadResponse(fileService.downloadFile(token))
 
     @GetMapping("/{token}/meta")
-    fun getFileMetadata(@PathVariable token: String): FileMetaDataResponse =
+    fun getFileMetadata(@PathVariable token: String) =
         FileMetaDataResponse(fileService.getFileMetadata(token))
 
     @DeleteMapping("/{token}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    fun deleteFile(@PathVariable token: String) {
-        fileService.deleteFile(token)
-    }
+    fun deleteFile(@PathVariable token: String) = fileService.deleteFile(token)
 }
