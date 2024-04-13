@@ -54,8 +54,7 @@ class FileController(
             return FileMetaResponse(emptyList())
         }
         val files = fileService.getFilesByMetadata(tokens.toList())
-        val fileMetaResponse = FileMetaResponse(files)
-        return fileMetaResponse
+        return FileMetaResponse(files)
     }
 
     @GetMapping("/{token}/content")
