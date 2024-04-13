@@ -24,50 +24,34 @@ import org.springframework.web.multipart.MultipartFile
 
 @RestController
 @RequestMapping("/files")
-class FileController(
-    private val fileService: FileService
-) {
+class FileController(private val fileService: FileService) {
 
-    @PostMapping(
-        consumes = [MediaType.MULTIPART_FORM_DATA_VALUE]
-    )
+    @PostMapping(consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
     @ResponseStatus(HttpStatus.CREATED)
     @io.swagger.v3.oas.annotations.parameters.RequestBody(
         content = [Content(
-            encoding = [Encoding(
-                contentType = MediaType.APPLICATION_JSON_VALUE,
-                name = "metadata"
-            )]
+            encoding = [Encoding(contentType = MediaType.APPLICATION_JSON_VALUE, name = "metadata")]
         )]
     )
     fun uploadFile(
         @Valid @RequestPart metadata: FileUploadMetadata,
         @RequestPart file: MultipartFile
-    ): FileUploadResponse {
-        val token = fileService.uploadFile(metadata, file)
-        return FileUploadResponse(token)
-    }
+    ): FileUploadResponse = FileUploadResponse(fileService.uploadFile(metadata, file))
 
     @GetMapping
-    fun getFilesByMetadata(@RequestParam tokens: Array<String>): FileMetaResponse {
-        if (tokens.isEmpty()) {
-            return FileMetaResponse(emptyList())
+    fun getFilesByMetadata(@RequestParam tokens: Array<String>): FileMetaResponse =
+        tokens.toList().let {
+            if (it.isEmpty()) FileMetaResponse(emptyList())
+            else FileMetaResponse(fileService.getFilesByMetadata(it))
         }
-        val files = fileService.getFilesByMetadata(tokens.toList())
-        return FileMetaResponse(files)
-    }
 
     @GetMapping("/{token}/content")
-    fun downloadFile(@PathVariable token: String): FileDownloadResponse {
-        val fileData = fileService.downloadFile(token)
-        return FileDownloadResponse(fileData)
-    }
+    fun downloadFile(@PathVariable token: String): FileDownloadResponse =
+        FileDownloadResponse(fileService.downloadFile(token))
 
     @GetMapping("/{token}/meta")
-    fun getFileMetadata(@PathVariable token: String): FileMetaDataResponse {
-        val fileMetadata = fileService.getFileMetadata(token)
-        return FileMetaDataResponse(fileMetadata)
-    }
+    fun getFileMetadata(@PathVariable token: String): FileMetaDataResponse =
+        FileMetaDataResponse(fileService.getFileMetadata(token))
 
     @DeleteMapping("/{token}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
