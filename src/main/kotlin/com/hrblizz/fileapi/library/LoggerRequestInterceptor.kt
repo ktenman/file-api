@@ -1,21 +1,21 @@
 package com.hrblizz.fileapi.library
 
-import com.hrblizz.fileapi.library.log.Logger
 import com.hrblizz.fileapi.library.log.TraceLogItem
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
+import org.slf4j.LoggerFactory
 import org.slf4j.MDC
 import org.springframework.stereotype.Component
 import org.springframework.web.servlet.HandlerInterceptor
 import java.util.*
 
 @Component
-class LoggerRequestInterceptor(
-    private val logger: Logger
-) : HandlerInterceptor {
+class LoggerRequestInterceptor : HandlerInterceptor {
+    private val log = LoggerFactory.getLogger(javaClass)
 
     override fun preHandle(request: HttpServletRequest, response: HttpServletResponse, handler: Any): Boolean {
-        MDC.put(CORRELATION_ID, MDC.get(CORRELATION_ID) ?: UUID.randomUUID().toString())
+        val transactionId = UUID.randomUUID().toString()
+        MDC.put(TRANSACTION_ID, transactionId)
         request.setAttribute("start_time", System.nanoTime())
         return true
     }
@@ -32,9 +32,9 @@ class LoggerRequestInterceptor(
             response.status.toLong(),
             durationInMillis(request.getAttribute("start_time") as Long),
         )
-        logItem.correlationId = MDC.get(CORRELATION_ID)
-        this.logger.info(logItem)
-        MDC.remove(CORRELATION_ID)
+        logItem.transactionId = MDC.get(TRANSACTION_ID)
+        log.info(logItem.toString())
+        MDC.remove(TRANSACTION_ID)
     }
 
     fun durationInMillis(startTime: Long): Long {
@@ -43,6 +43,6 @@ class LoggerRequestInterceptor(
     }
 
     companion object {
-        const val CORRELATION_ID = "correlation_id"
+        const val TRANSACTION_ID = "transactionId"
     }
 }

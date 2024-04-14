@@ -7,7 +7,7 @@ import java.io.StringWriter
 data class ExceptionLogItem(
     override val message: String,
     @JsonIgnore val exception: Exception,
-    override var correlationId: String? = null
+    override var transactionId: String? = null
 ) : LogItem(message) {
 
     @JsonIgnore
@@ -21,6 +21,6 @@ data class ExceptionLogItem(
     }
 
     override fun toString(): String {
-        return "[$dateTime] [$correlationId] $message \n $stacktrace"
+        return "$message \n $stacktrace"
     }
 }

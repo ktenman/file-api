@@ -3,8 +3,9 @@ package com.hrblizz.fileapi.library
 import com.hrblizz.fileapi.controller.exception.BadRequestException
 import com.hrblizz.fileapi.controller.exception.NotFoundException
 import com.hrblizz.fileapi.library.log.ExceptionLogItem
-import com.hrblizz.fileapi.library.log.Logger
 import com.hrblizz.fileapi.rest.ErrorMessage
+import org.slf4j.LoggerFactory
+import org.slf4j.MDC
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.MethodArgumentNotValidException
@@ -15,7 +16,8 @@ import org.springframework.web.bind.support.WebExchangeBindException
 import org.springframework.web.multipart.support.MissingServletRequestPartException
 
 @ControllerAdvice
-class RestExceptionHandler(private val logger: Logger) {
+class RestExceptionHandler {
+    private val log = LoggerFactory.getLogger(javaClass)
 
     @ExceptionHandler(
         NotFoundException::class,
@@ -95,6 +97,8 @@ class RestExceptionHandler(private val logger: Logger) {
     }
 
     private fun logException(exception: Exception, message: String) {
-        logger.error(ExceptionLogItem(message, exception))
+        val exceptionLogItem = ExceptionLogItem(message, exception)
+        exceptionLogItem.transactionId = MDC.get(LoggerRequestInterceptor.TRANSACTION_ID)
+        log.error(exceptionLogItem.toString())
     }
 }

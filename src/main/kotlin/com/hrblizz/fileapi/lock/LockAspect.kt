@@ -1,17 +1,15 @@
 package com.hrblizz.fileapi.lock
 
-import com.hrblizz.fileapi.library.log.Logger
 import org.aspectj.lang.ProceedingJoinPoint
 import org.aspectj.lang.annotation.Around
 import org.aspectj.lang.annotation.Aspect
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 
 @Aspect
 @Component
-class LockAspect(
-    private val lockService: LockService,
-    private val logger: Logger,
-) {
+class LockAspect(private val lockService: LockService) {
+    private val log = LoggerFactory.getLogger(javaClass)
 
     @Around("@annotation(lock)")
     fun aroundLockedMethod(joinPoint: ProceedingJoinPoint, lock: Lock) {
@@ -23,12 +21,12 @@ class LockAspect(
             val lockAcquired = lockService.tryAcquireLock(lock.key, timeoutMillis)
             check(lockAcquired) { "Unable to acquire lock for key: ${lock.key}" }
         }
-        logger.debug("Lock acquired for key ${lock.key}")
+        log.debug("Lock acquired for key ${lock.key}")
         try {
             joinPoint.proceed()
         } finally {
             lockService.releaseLock(lock.key)
-            logger.debug("Lock released for key ${lock.key}")
+            log.debug("Lock released for key ${lock.key}")
         }
     }
 }
