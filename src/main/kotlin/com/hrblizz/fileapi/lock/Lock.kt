@@ -9,20 +9,17 @@ package com.hrblizz.fileapi.lock
  * execution of the annotated method for the same key in a distributed environment.
  *
  *
- * The key is specified using the 'key' attribute, which supports the following format:
- *
- *  * Static string value: The key should be enclosed in single quotes (e.g., 'myLockKey').
- *
+ * The key is specified using the 'key' attribute, which should be a constant string value.
  *
  *
  * Example:
  * <pre>
- * &#064;Lock(key = "'myStaticLockKey'")
+ * &#064;Lock(key = "myStaticLockKey")
  * public void processAccount() {
  * // Method body
  * }
 </pre> *
- * In this example, the 'key' is set to "'myStaticLockKey'", which means the lock will be
+ * In this example, the 'key' is set to "myStaticLockKey", which means the lock will be
  * based on the static string value "myStaticLockKey".
  *
  *
@@ -37,15 +34,9 @@ package com.hrblizz.fileapi.lock
 )
 annotation class Lock(
     /**
-     * The key to lock the method execution.
+     * The constant string key to lock the method execution.
      *
-     *
-     * The key supports the following format:
-     *
-     *  * Static string value: The key should be enclosed in single quotes (e.g., 'myLockKey').
-     *
-     *
-     * @return the key or SpEL expression for the key
+     * @return the constant string key
      */
     val key: String,
     /**

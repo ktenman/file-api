@@ -1,70 +1,53 @@
 package com.hrblizz.fileapi.lock
 
+import com.hrblizz.fileapi.controller.exception.LockAcquisitionException
+import org.slf4j.LoggerFactory
 import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.stereotype.Service
 import java.lang.Boolean.TRUE
 import java.time.Clock
 import java.util.concurrent.TimeUnit
-import kotlin.math.min
 
 @Service
 class LockService(
     private val redisTemplate: RedisTemplate<String, String>,
     private val clock: Clock
 ) {
-    companion object {
-        const val LOCK_PREFIX: String = "lock:"
-        private const val DEFAULT_LOCK_WAIT_MILLIS: Long = 5000
-        private const val DEFAULT_LOCK_RETRY_INTERVAL_MILLIS: Long = 30
-    }
+    private val log = LoggerFactory.getLogger(javaClass)
 
     fun acquireLock(identifier: String, timeoutMillis: Long) {
-        var retryIntervalMillis = DEFAULT_LOCK_RETRY_INTERVAL_MILLIS
         val startTime = clock.millis()
-        var previous: Long = 0
-        var current: Long = 1
+        val maxEndTime = startTime + DEFAULT_LOCK_WAIT_MILLIS
+        var retryIntervalMillis = DEFAULT_LOCK_RETRY_INTERVAL_MILLIS
 
-        while (clock.millis() - startTime < DEFAULT_LOCK_WAIT_MILLIS) {
-            if (tryAcquireLock(identifier, timeoutMillis)) {
-                return
-            }
-            sleep(retryIntervalMillis)
-            val next = previous + current
-            previous = current
-            current = next
-            retryIntervalMillis = calculateRetryInterval(current, retryIntervalMillis, startTime)
+        while (clock.millis() < maxEndTime) {
+            if (tryAcquireLock(identifier, timeoutMillis)) return
+            Thread.sleep(retryIntervalMillis)
+            retryIntervalMillis = (retryIntervalMillis * 2).coerceAtMost(maxEndTime - clock.millis())
         }
-        throw IllegalStateException("Unable to acquire lock for identifier: $identifier")
+        throw LockAcquisitionException("Unable to acquire lock for identifier: $identifier")
     }
 
-    fun tryAcquireLock(identifier: String, timeoutMillis: Long): Boolean {
-        val lockKey = LOCK_PREFIX + identifier
-        return TRUE == redisTemplate.opsForValue()
-            .setIfAbsent(lockKey, "locked", timeoutMillis, TimeUnit.MILLISECONDS)
-    }
-
-    private fun sleep(millis: Long) {
-        try {
-            TimeUnit.MILLISECONDS.sleep(millis)
-        } catch (e: InterruptedException) {
-            Thread.currentThread().interrupt()
-            throw IllegalStateException("Lock acquisition interrupted", e)
-        }
-    }
-
-    private fun calculateRetryInterval(
-        current: Long,
-        retryIntervalMillis: Long,
-        startTime: Long,
-    ): Long {
-        return min(
-            (current * retryIntervalMillis).toDouble(),
-            (DEFAULT_LOCK_WAIT_MILLIS - (clock.millis() - startTime)).toDouble()
-        ).toLong()
+    fun tryAcquireLock(identifier: String, timeoutMillis: Long): Boolean = try {
+        redisTemplate.opsForValue()
+            .setIfAbsent(identifier.lockKey(), "locked", timeoutMillis, TimeUnit.MILLISECONDS) == TRUE
+    } catch (e: Exception) {
+        false
     }
 
     fun releaseLock(identifier: String) {
-        val lockKey = LOCK_PREFIX + identifier
-        redisTemplate.delete(lockKey)
+        try {
+            redisTemplate.delete(identifier.lockKey())
+        } catch (e: Exception) {
+            log.error("Failed to release lock for identifier: $identifier", e)
+        }
+    }
+
+    private fun String.lockKey() = "$LOCK_PREFIX$this"
+
+    companion object {
+        const val LOCK_PREFIX = "lock:"
+        const val DEFAULT_LOCK_WAIT_MILLIS = 5000L
+        const val DEFAULT_LOCK_RETRY_INTERVAL_MILLIS = 30L
     }
 }

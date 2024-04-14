@@ -1,6 +1,8 @@
 package com.hrblizz.fileapi.lock
 
-import org.assertj.core.api.Assertions.assertThatThrownBy
+import com.hrblizz.fileapi.controller.exception.LockAcquisitionException
+import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.catchThrowable
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.ArgumentMatchers.anyLong
@@ -59,8 +61,10 @@ class LockServiceTest {
             .thenReturn(0L)
             .thenReturn(5000L)
 
-        assertThatThrownBy { lockService.acquireLock(defaultLockIdentifier, 60_000) }
-            .isInstanceOf(IllegalStateException::class.java)
+        val thrown = catchThrowable { lockService.acquireLock(defaultLockIdentifier, 60_000) }
+
+        assertThat(thrown)
+            .isInstanceOf(LockAcquisitionException::class.java)
             .hasMessageContaining("Unable to acquire lock for identifier: $defaultLockIdentifier")
     }
 
