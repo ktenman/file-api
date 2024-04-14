@@ -21,7 +21,7 @@ import java.time.Clock
 import java.util.concurrent.TimeUnit
 
 @ExtendWith(MockitoExtension::class)
-class LockServiceTest {
+class RedisLockServiceTest {
 
     private val defaultLockIdentifier = "testLock"
 
@@ -35,7 +35,7 @@ class LockServiceTest {
     private lateinit var clock: Clock
 
     @InjectMocks
-    private lateinit var lockService: LockService
+    private lateinit var redisLockService: RedisLockService
 
     @Test
     fun `acquireLock should acquire lock successfully`() {
@@ -50,7 +50,7 @@ class LockServiceTest {
         )
             .thenReturn(true)
 
-        lockService.acquireLock(defaultLockIdentifier, 60_000)
+        redisLockService.acquireLock(defaultLockIdentifier, 60_000)
 
         verify(valueOperations, times(1)).setIfAbsent(anyString(), anyString(), anyLong(), any())
     }
@@ -61,7 +61,7 @@ class LockServiceTest {
             .thenReturn(0L)
             .thenReturn(5000L)
 
-        val thrown = catchThrowable { lockService.acquireLock(defaultLockIdentifier, 60_000) }
+        val thrown = catchThrowable { redisLockService.acquireLock(defaultLockIdentifier, 60_000) }
 
         assertThat(thrown)
             .isInstanceOf(LockAcquisitionException::class.java)
@@ -70,7 +70,7 @@ class LockServiceTest {
 
     @Test
     fun `releaseLock should release lock successfully`() {
-        lockService.releaseLock(defaultLockIdentifier)
+        redisLockService.releaseLock(defaultLockIdentifier)
 
         verify(redisTemplate, times(1)).delete("lock:$defaultLockIdentifier")
     }
@@ -90,7 +90,7 @@ class LockServiceTest {
             .thenReturn(90L)  // Retry 3
             .thenReturn(120L) // Lock acquired
 
-        lockService.acquireLock(defaultLockIdentifier, 60_000)
+        redisLockService.acquireLock(defaultLockIdentifier, 60_000)
 
         verify(valueOperations, times(4)).setIfAbsent(anyString(), anyString(), anyLong(), any())
         verify(clock, times(8)).millis()
