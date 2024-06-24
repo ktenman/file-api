@@ -2,7 +2,7 @@ package com.hrblizz.fileapi.job
 
 import com.hrblizz.fileapi.IntegrationTest
 import com.hrblizz.fileapi.data.entities.FileMetadata
-import com.hrblizz.fileapi.storage.StorageService
+import com.hrblizz.fileapi.service.StorageService
 import jakarta.annotation.Resource
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.groups.Tuple

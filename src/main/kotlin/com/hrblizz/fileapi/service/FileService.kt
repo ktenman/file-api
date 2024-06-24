@@ -6,7 +6,6 @@ import com.hrblizz.fileapi.data.repository.FileMetadataRepository
 import com.hrblizz.fileapi.library.JsonUtil
 import com.hrblizz.fileapi.rest.FileData
 import com.hrblizz.fileapi.rest.FileUploadMetadata
-import com.hrblizz.fileapi.storage.StorageService
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
 import java.time.Clock

@@ -7,7 +7,7 @@ import com.hrblizz.fileapi.IntegrationTest.Companion.USERNAME
 import com.hrblizz.fileapi.library.JsonUtil
 import com.hrblizz.fileapi.rest.FileUploadMetadata
 import com.hrblizz.fileapi.service.FileService
-import com.hrblizz.fileapi.storage.StorageService
+import com.hrblizz.fileapi.service.StorageService
 import jakarta.annotation.Resource
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any

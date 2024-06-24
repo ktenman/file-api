@@ -1,4 +1,4 @@
-package com.hrblizz.fileapi.storage
+package com.hrblizz.fileapi.service
 
 import io.minio.GetObjectArgs
 import io.minio.MinioClient

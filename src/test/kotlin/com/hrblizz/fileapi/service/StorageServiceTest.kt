@@ -1,4 +1,4 @@
-package com.hrblizz.fileapi.storage
+package com.hrblizz.fileapi.service
 
 import com.hrblizz.fileapi.IntegrationTest
 import jakarta.annotation.Resource

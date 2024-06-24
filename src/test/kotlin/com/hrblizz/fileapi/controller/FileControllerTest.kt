@@ -9,7 +9,7 @@ import com.hrblizz.fileapi.library.JsonUtil
 import com.hrblizz.fileapi.rest.FileMetaResponse
 import com.hrblizz.fileapi.rest.FileMetaResponse.FileMetaDataResponse
 import com.hrblizz.fileapi.rest.FileUploadMetadata
-import com.hrblizz.fileapi.storage.StorageService
+import com.hrblizz.fileapi.service.StorageService
 import jakarta.annotation.Resource
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
