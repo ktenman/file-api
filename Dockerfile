@@ -7,7 +7,7 @@ COPY src /app/src
 
 RUN mvn --quiet package -DskipTests
 
-FROM bellsoft/liberica-runtime-container:jre-21-slim-musl
+FROM bellsoft/liberica-openjdk-alpine:21
 
 WORKDIR /app
 
