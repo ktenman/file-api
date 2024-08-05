@@ -44,7 +44,7 @@ jobs:
             -Dsonar.projectKey=ktenman_file-api \
             -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
 
-      - uses: actions/upload-artifact@v4.3.4
+      - uses: actions/upload-artifact@v4.3.5
         if: always()
         with:
           name: Test reports
